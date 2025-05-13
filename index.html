@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Bitácoras</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0; /* Reset margin for full screen */
+            padding: 0; /* Reset padding for full screen */
+            background-color: #f4f4f4;
+            background-image: url('https://d2sapt5dytmohl.cloudfront.net/images/upload/92505/sml/660f1cdf9c6527.27633487.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh; /* Ensure full viewport height */
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-top: 20px; /* Add margin at the top */
+        }
+
+        .menu-principal {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch; /* Stretch buttons to container width */
+            margin-bottom: 20px;
+            width: 100%; /* Take full width of the screen */
+            padding: 0 10px; /* Add padding to the sides */
+        }
+
+        .menu-principal button {
+            padding: 12px 20px;
+            font-size: 18px;
+            margin: 8px 0; /* Space between buttons */
+            cursor: pointer;
+            background-color: #fff;
+            color: #333;
+            border: none;
+            border-radius: 8px; /* Slightly more rounded corners */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            text-align: center; /* Center the text */
+        }
+
+        .menu-principal button:hover {
+            background-color: #f0f0f0;
+        }
+
+        .formulario-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 12px; /* More rounded corners */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Slightly stronger shadow */
+            margin-bottom: 20px;
+            display: none;
+            width: 95%; /* Use most of the screen width */
+            max-width: 600px; /* Keep a maximum width */
+        }
+
+        label {
+            display: block;
+            margin-top: 15px; /* More space above labels */
+            font-weight: bold;
+            font-size: 16px;
+            color: #555; /* Darker label color */
+        }
+
+        input[type="text"], input[type="date"], textarea, select {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            margin-bottom: 20px; /* Increased bottom margin */
+            border: 1px solid #ddd;
+            border-radius: 6px; /* Slightly rounded corners */
+            box-sizing: border-box;
+            font-size: 16px; /* Increased font size */
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px; /* Ensure a minimum height for textarea */
+        }
+
+        button {
+            background-color: #4caf50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px; /* Slightly rounded corners */
+            cursor: pointer;
+            font-size: 18px; /* Increased font size */
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #formulario-container {
+            display: none;
+        }
+
+        /* Styles for Android appearance */
+        body {
+            background-color: #f0f0f0; /* Light gray background */
+        }
+
+        h1 {
+            font-size: 24px; /* Larger heading */
+            color: #3C51A8; /* Android Blue */
+        }
+
+        .menu-principal button {
+            background-color: #FFFFFF; /* White buttons */
+            color: #212121; /* Dark gray text */
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            transition: background-color 0.3s ease; /* Smooth transition */
+            font-weight: 500; /* Medium font weight */
+        }
+
+        .menu-principal button:hover {
+            background-color: #E0E0E0; /* Slightly lighter gray on hover */
+        }
+
+        .formulario-container {
+            background-color: #FFFFFF;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="text"], input[type="date"], textarea, select {
+            border: 1px solid #BDBDBD; /* Lighter border */
+            border-radius: 4px;
+            font-size: 16px;
+            color: #212121; /* Dark gray text */
+        }
+
+        input[type="text"]:focus, input[type="date"]:focus, textarea:focus, select:focus {
+            border-color: #3C51A8; /* Highlight on focus */
+            outline: none; /* Remove default outline */
+        }
+
+        button {
+            background-color: #3C51A8; /* Android Blue */
+            color: #FFFFFF;
+            border-radius: 4px;
+            font-size: 18px;
+            font-weight: 500;
+            text-transform: uppercase; /* Uppercase text */
+        }
+
+        button:hover {
+            background-color: #283593; /* Darker shade of blue */
+        }
+    </style>
+    <script>
+        // Función para obtener los parámetros de la URL.
+        function getUrlVars() {
+            let vars = {};
+            let parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
+                vars[key] = value;
+            });
+            return vars;
+        }
+
+        // Función para enviar los datos del formulario a Google Forms.
+        function enviarFormulario(formType) {
+            let formUrl = "";
+            let url = "";
+            let fecha, horometro, quienRealiza, tipoMantenimiento, descripcionFalla, operador, notas, tipoMaquinaria;
+
+            if (formType === "maquinaria") {
+                formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdAhggfNXWh3k3D4FE8p__wyk-y0s6MO_VgS1yFp1YsDQttDQ/formResponse";
+                fecha = document.getElementById("fecha").value;
+                horometro = document.getElementById("horometro").value;
+                quienRealiza = document.getElementById("quienRealiza").value;
+                tipoMantenimiento = document.getElementById("tipoMantenimiento").value;
+                descripcionFalla = document.getElementById("descripcionFalla").value;
+                operador = document.getElementById("operador").value;
+                notas = document.getElementById("notas").value;
+                tipoMaquinaria = document.getElementById("tipoMaquinaria").value;
+                url = `${formUrl}?entry.1188599395=${fecha}&entry.946574511=${horometro}&entry.2139075027=${quienRealiza}&entry.487496965=${tipoMantenimiento}&entry.1655943125=${descripcionFalla}&entry.448217992=${operador}&entry.83392952=${notas}&entry.1916104391=${tipoMaquinaria}`;
+            } else if (formType === "vehiculos") {
+                // Aquí deberías obtener los datos del formulario de vehículos y construir la URL correspondiente.
+                alert("Formulario de Vehículos no implementado aún");
+                return; // Evita que se ejecute el resto de la función
+            } else if (formType === "reporte") {
+                // Aquí deberías obtener los datos del formulario de reporte y construir la URL correspondiente.
+                alert("Formulario de Reporte no implementado aún");
+                return; // Evita que se ejecute el resto de la función
+            }
+
+            fetch(url, {
+                method: 'GET',
+                mode: 'no-cors'
+            })
+            .then(response => {
+                if (response.status >= 200 && response.status < 300) {
+                    alert("¡Formulario enviado con éxito!");
+                    limpiarFormulario(formType);
+                } else {
+                    console.error("Error al enviar el formulario:", response.status, response.statusText);
+                    alert("Error al enviar el formulario. Por favor, inténtalo de nuevo.");
+                }
+            })
+            .catch(error => {
+                console.error("Error de red:", error);
+                alert("Error de red. Por favor, verifica tu conexión a Internet.");
+            });
+
+            return false;
+        }
+
+        function limpiarFormulario(formType) {
+            if (formType === "maquinaria") {
+                document.getElementById("fecha").value = "";
+                document.getElementById("horometro").value = "";
+                document.getElementById("quienRealiza").value = "";
+                document.getElementById("tipoMantenimiento").value = "";
+                document.getElementById("descripcionFalla").value = "";
+                document.getElementById("operador").value = "";
+                document.getElementById("notas").value = "";
+                document.getElementById("tipoMaquinaria").value = "";
+            } else if (formType === "vehiculos") {
+                // Limpiar campos del formulario de vehículos
+            } else if (formType === "reporte") {
+                // Limpiar campos del formulario de reporte
+            }
+        }
+
+        function mostrarFormulario(formType) {
+            // Oculta todos los formularios y el menú principal
+            document.getElementById("formulario-container").style.display = "none";
+            document.getElementById("menu-principal").style.display = "none";
+
+            // Muestra el formulario seleccionado
+            if (formType === "maquinaria") {
+                document.getElementById("formulario-container").style.display = "block";
+                document.getElementById("formulario-container").innerHTML = `
+                    <h1 style="font-size: 24px; color: #3C51A8; margin-bottom: 20px;">BITÁCORA DE MAQUINARIA</h1>
+                    <form id="formulario" onsubmit="return enviarFormulario('maquinaria');">
+                        <label for="fecha">Fecha:</label>
+                        <input type="date" id="fecha" name="fecha" required><br><br>
+                        <label for="horometro">Horómetro:</label>
+                        <input type="text" id="horometro" name="horometro" required><br><br>
+                        <label for="quienRealiza">Quién Realiza el Mantenimiento:</label>
+                        <input type="text" id="quienRealiza" name="quienRealiza" required><br><br>
+                        <label for="tipoMantenimiento">Tipo de Mantenimiento:</label>
+                        <select id="tipoMantenimiento" name="tipoMantenimiento">
+                            <option value="Preventivo">Preventivo</option>
+                            <option value="Correctivo">Correctivo</option>
+                        </select><br><br>
+                        <label for="descripcionFalla">Descripción de la Falla:</label>
+                        <textarea id="descripcionFalla" name="descripcionFalla" rows="4" required></textarea><br><br>
+                        <label for="operador">Operador:</label>
+                        <input type="text" id="operador" name="operador" required><br><br>
+                        <label for="notas">Notas:</label>
+                        <textarea id="notas" name="notas" rows="4"></textarea><br><br>
+                        <label for="tipoMaquinaria">Tipo de Maquinaria:</label>
+                        <select id="tipoMaquinaria" name="tipoMaquinaria">
+                            <option value="VIBROCOMPACTADOR1 INGERSOLL SD100D C">VIBROCOMPACTADOR1 INGERSOLL SD100D C</option>
+                            <option value="RETROEXCAVADORA1 EXT 580M EXT">RETROEXCAVADORA1 EXT 580M EXT</option>
+                            <option value="CAMION 2 T600">CAMION 2 T600</option>
+                            <option value="PIPA1">PIPA1</option>
+                            <option value="CAMION3 T600B">CAMION3 T600B</option>
+                            <option value="RETROEXCAVADORA3 580SN">RETROEXCAVADORA3 580SN</option>
+                            <option value="MOTONIVELADORA 1 140H">MOTONIVELADORA 1 140H</option>
+                            <option value="MOTONIVELADORA 12G">MOTONIVELADORA 12G</option>
+                            <option value="VIBROCOMPACTADOR2 CATERPILLAR">VIBROCOMPACTADOR2 CATERPILLAR</option>
+                            <option value="PIPA2 T300">PIPA2 T300</option>
+                            <option value="COMPRESOR1">COMPRESOR1</option>
+                            <option value="COMPRESOR2">COMPRESOR2</option>
+                            <option value="COMPRESOR3">COMPRESOR3</option>
+                            <option value="DIRECCIONAL">DIRECCIONAL</option>
+                            <option value="PLATAFORMA">PLATAFORMA</option>
+                            <option value="TOPO">TOPO</option>
+                            <option value="PATA DE CABRA">PATA DE CABRA</option>
+                            <option value="RETROEXCAVADORA CAT 416D">RETROEXCAVADORA CAT 416D</option>
+                        </select><br><br>
+                        <button type="submit">Enviar Formulario</button>
+                        <button type="button" onclick="mostrarInicio()">Página de Inicio</button>
+                    </form>
+                `;
+            } else if (formType === "vehiculos") {
+                document.getElementById("formulario-container").style.display = "block";
+                document.getElementById("formulario-container").innerHTML = `
+                    <h1 style="font-size: 24px; color: #3C51A8; margin-bottom: 20px;">BITÁCORA DE VEHÍCULOS</h1>
+                    <form id="formulario-vehiculos" onsubmit="return enviarFormulario('vehiculos');">
+                        <label for="fecha_vehiculo">Fecha:</label>
+                        <input type="date" id="fecha_vehiculo" name="fecha_vehiculo" required><br><br>
+                        <label for="placa">Placa:</label>
+                        <input type="text" id="placa" name="placa" required><br><br>
+                        <label for="conductor">Conductor:</label>
+                        <input type="text" id="conductor" name="conductor" required><br><br>
+                        <button type="submit">Enviar Formulario de Vehículos</button>
+                        <button type="button" onclick="mostrarInicio()">Página de Inicio</button>
+                    </form>
+                `;
+            } else if (formType === "reporte") {
+                document.getElementById("formulario-container").style.display = "block";
+                document.getElementById("formulario-container").innerHTML = `
+                    <h1 style="font-size: 24px; color: #3C51A8; margin-bottom: 20px;">REPORTE DE ACTIVIDADES DE MAQUINARIA</h1>
+                    <form id="formulario-reporte" onsubmit="return enviarFormulario('reporte');">
+                        <label for="fecha_reporte">Fecha del Reporte:</label>
+                        <input type="date" id="fecha_reporte" name="fecha_reporte" required><br><br>
+                        <label for="maquina_reporte">Máquina:</label>
+                        <input type="text" id="maquina_reporte" name="maquina_reporte" required><br><br>
+                         <label for="descripcion_reporte">Descripción del Reporte:</label>
+                        <textarea id="descripcion_reporte" name="descripcion_reporte" rows="4" required></textarea><br><br>
+                        <button type="submit">Generar Reporte</button>
+                        <button type="button" onclick="mostrarInicio()">Página de Inicio</button>
+                    </form>
+                `;
+            }
+        }
+
+        function mostrarInicio() {
+            document.getElementById("formulario-container").style.display = "none";
+            document.getElementById("menu-principal").style.display = "block";
+        }
+
+
+    </script>
+</head>
+<body>
+    <div id="menu-principal" class="menu-principal">
+        <h1 style="font-size: 24px; color: #3C51A8;">BITÁCORA DE MANTENIMIENTOS</h1>
+        <button onclick="mostrarFormulario('maquinaria')">BITÁCORA DE MAQUINARIA</button>
+        <button onclick="mostrarFormulario('vehiculos')">BITÁCORA DE VEHÍCULOS</button>
+        <button onclick="mostrarFormulario('reporte')">REPORTE DE ACTIVIDADES DE MAQUINARIA</button>
+    </div>
+
+    <div id="formulario-container">
+        </div>
+
+
+
+</body>
+</html>
