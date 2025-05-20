@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Bitácoras</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@tailwindcss/browser@latest"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -109,34 +111,18 @@
             min-height: 100px;
         }
 
-        button {
-            background-color: #3498db;
-            color: #FFFFFF;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 18px;
-            width: 100%;
-            margin-top: 10px;
-            font-weight: 500;
-            text-transform: uppercase;
-        }
-
-        button:hover {
-            background-color: #2980b9;
-        }
-
-        /* Estilo específico para el botón de limpiar */
-         button.limpiar-button {
-            background-color: #ccc; /* Color gris */
-            color: #2c3e50; /* Texto oscuro */
-            margin-top: 5px; /* Espacio arriba */
+        /* Estilo específico para el botón de limpiar, si no usa custom-button */
+        /*
+        button.limpiar-button {
+            background-color: #ccc;
+            color: #2c3e50;
+            margin-top: 5px;
         }
 
         button.limpiar-button:hover {
-            background-color: #b3b3b3; /* Gris más oscuro al pasar el mouse */
+            background-color: #b3b3b3;
         }
+        */
 
 
         #formulario-container {
@@ -185,6 +171,136 @@
             color: #555;
             margin-top: 10px;
         }
+
+        .recordatorio-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #fff;
+            padding: 1rem;
+            border-radius: 0.375rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 10;
+            border: 1px solid #f56565;
+            color: #f56565;
+            animation: fadeIn 1s ease-in-out, pulse 2s infinite alternate;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to   { transform: scale(1.05); }
+        }
+
+        /* Estilos de codigo2.html y para los nuevos botones */
+        .custom-form-container {
+            background-color: #f7fafc;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .custom-form-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .custom-form-title {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 0.5rem;
+        }
+        .custom-form-description {
+            font-size: 1rem;
+            color: #4a5568;
+        }
+        .custom-form-group {
+            margin-bottom: 1.25rem;
+        }
+        .custom-form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.25rem;
+        }
+        .custom-input, .custom-select {
+            display: block;
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            transition: border-color 0.15s ease-in-out, shadow-sm 0.15s ease-in-out;
+            outline: none;
+        }
+        .custom-input:focus, .custom-select:focus {
+            border-color: #3182ce;
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+        }
+        .custom-input::placeholder {
+            color: #a0aec0;
+        }
+        .custom-button {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 0.375rem;
+            color: white;
+            background-color: #f56565; /* Color principal para enviar */
+            transition: background-color 0.15s ease-in-out, transform 0.1s ease-in-out;
+            cursor: pointer;
+            border: none;
+            display: block;
+            width: 100%;
+            text-align: center;
+            margin-top: 1rem; /* Espacio superior para los botones */
+        }
+        .custom-button:hover {
+            background-color: #c53030;
+            transform: translateY(-1px);
+        }
+        .custom-button:disabled {
+            background-color: #a0aec0;
+            cursor: not-allowed;
+            opacity: 0.7;
+            transform: none;
+        }
+        /* Estilo específico para el botón de limpiar con custom-button */
+        .custom-button.limpiar-button {
+            background-color: #cbd5e0; /* Color gris claro para limpiar */
+            color: #2d3748; /* Texto oscuro */
+        }
+        .custom-button.limpiar-button:hover {
+            background-color: #a0aec0; /* Gris más oscuro al pasar el mouse */
+        }
+        /* Estilo específico para el botón de inicio con custom-button */
+        .custom-button.home-button {
+            background-color: #63b3ed; /* Un color azul para inicio */
+            color: white;
+        }
+        .custom-button.home-button:hover {
+            background-color: #4299e1;
+        }
+
+        /* Estilos específicos para la sección de maquinaria */
+        #maquinariaForm {
+            margin-top: 2rem;
+        }
+
+        /* Estilos para los campos de Camion Azul y Blanco */
+        .camion-fields {
+            display: none;
+        }
+
+        /* Estilos para los campos de las demás maquinarias */
+        .otra-maquinaria-fields {
+            display: none;
+        }
     </style>
     <script>
         // Función para obtener los parámetros de la URL. (No se usa en este código, pero se mantiene)
@@ -228,54 +344,68 @@
                 url = `${formUrl}?entry.1638048660=${encodeURIComponent(fechaReporte)}&entry.2133398980=${encodeURIComponent(kilometraje)}&entry.577390048=${encodeURIComponent(quienRealiza)}&entry.1752961413=${encodeURIComponent(tipoMantenimiento)}&entry.1174496201=${encodeURIComponent(descripcionMantenimiento)}&entry.1283041917=${encodeURIComponent(operador)}&entry.1784723540=${encodeURIComponent(notas)}&entry.1830403408=${encodeURIComponent(vehiculo)}`;
             } else if (formType === "reporte") {
                 formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSf-KP92rEzes-fIlAD46P3pP4uZa7N_dywVKicxK24RlWQd0Q/formResponse";
-                fechaRep = document.getElementById("fecha_reporte").value;
-                material = document.getElementById("material").value;
-                obra = document.getElementById("obra").value;
-                noViajes = document.getElementById("noViajes").value;
-                noVale = document.getElementById("noVale").value;
-                capacidad = document.getElementById("capacidad").value;
-                chofer = document.getElementById("chofer").value;
-                banco = document.getElementById("banco").value;
-                distancia = document.getElementById("distancia").value;
-                consumoLTKM = document.getElementById("consumoLTKM").value;
-                consumoTotal = document.getElementById("consumoTotal").value;
-                combustible = document.getElementById("combustible").value;
-                saldoCombustible = document.getElementById("saldoCombustible").value;
-                maquinaRep = document.getElementById("maquina_reporte").value;
 
-                url = `${formUrl}?entry.1374104361=${encodeURIComponent(fechaRep)}&entry.1386567991=${encodeURIComponent(material)}&entry.779606912=${encodeURIComponent(obra)}&entry.1715069500=${encodeURIComponent(noViajes)}&entry.1534523501=${encodeURIComponent(noVale)}&entry.1615038838=${encodeURIComponent(capacidad)}&entry.796410296=${encodeURIComponent(chofer)}&entry.1635175379=${encodeURIComponent(banco)}&entry.1847012257=${encodeURIComponent(distancia)}&entry.362499978=${encodeURIComponent(consumoLTKM)}&entry.828487901=${encodeURIComponent(consumoTotal)}&entry.1650964098=${encodeURIComponent(combustible)}&entry.1025594978=${encodeURIComponent(saldoCombustible)}&entry.1860383735=${encodeURIComponent(maquinaRep)}`;
+                const maquinaSeleccionada = document.getElementById('maquina').value;
+
+                if (maquinaSeleccionada === 'camion_azul' || maquinaSeleccionada === 'camion_blanco') {
+                    fechaRep = document.getElementById("fecha_camion").value;
+                    material = document.getElementById("material").value;
+                    obra = document.getElementById("obra_camion").value;
+                    noViajes = document.getElementById("no_viajes").value;
+                    noVale = document.getElementById("no_vale").value;
+                    capacidad = document.getElementById("capacidad").value;
+                    chofer = document.getElementById("chofer").value;
+                    banco = document.getElementById("banco").value;
+                    distancia = document.getElementById("distancia").value;
+                    consumoLTKM = document.getElementById("consumo_lt_km").value;
+                    combustible = document.getElementById("combustible").value;
+                    saldoCombustible = document.getElementById("saldo_combustible").value;
+                    maquinaRep = maquinaSeleccionada === 'camion_azul' ? 'CAMION AZUL' : 'CAMION BLANCO';
+
+                    url = `${formUrl}?entry.1374104361=${encodeURIComponent(fechaRep)}&entry.1386567991=${encodeURIComponent(material)}&entry.779606912=${encodeURIComponent(obra)}&entry.1715069500=${encodeURIComponent(noViajes)}&entry.1534523501=${encodeURIComponent(noVale)}&entry.1615038838=${encodeURIComponent(capacidad)}&entry.796410296=${encodeURIComponent(chofer)}&entry.1635175379=${encodeURIComponent(banco)}&entry.1847012257=${encodeURIComponent(distancia)}&entry.362499978=${encodeURIComponent(consumoLTKM)}&entry.1650964098=${encodeURIComponent(combustible)}&entry.1025594978=${encodeURIComponent(saldoCombustible)}&entry.1860383735=${encodeURIComponent(maquinaRep)}`;
+
+                } else {
+                    fechaRep = document.getElementById("fecha_otra").value;
+                    const horometroSalida = document.getElementById("horometro_salida").value;
+                    const horometroRegreso = document.getElementById("horometro_regreso").value;
+                    const horasTrabajadas = document.getElementById("horas_trabajadas").value;
+                    obra = document.getElementById("obra_otra").value;
+                    notas = document.getElementById("notas").value;
+                    maquinaRep = '';
+
+                    switch (maquinaSeleccionada) {
+                        case 'moto_140h': maquinaRep = 'MOTO 140H'; break;
+                        case 'moto_12g': maquinaRep = 'MOTO 12G'; break;
+                        case 'retroexcavadora_580_super_n': maquinaRep = 'Retroexcavadora 580 SUPER N'; break;
+                        case 'retroexcavadora_580_m': maquinaRep = 'Retroexcavadora 580 M'; break;
+                        case 'retroexcavadora_cat_416d': maquinaRep = 'Retroexcavadora CAT 416D'; break;
+                        case 'vibro_cat': maquinaRep = 'VIBRO CAT'; break;
+                        case 'pipa_freightliner': maquinaRep = 'PIPA FREIGHTLINER'; break;
+                        case 'pipa_kenworth': maquinaRep = 'PIPA KENWORTH'; break;
+                        case 'pata_de_cabra_cp_553': maquinaRep = 'PATA DE CABRA CP-553'; break;
+                        case 'bomba_achique_3': maquinaRep = 'BOMBA ACHIQUE 3\'\''; break;
+                        default: maquinaRep = maquinaSeleccionada; break;
+                    }
+
+                    url = `${formUrl}?entry.1374104361=${encodeURIComponent(fechaRep)}&entry.779606912=${encodeURIComponent(obra)}&entry.1860383735=${encodeURIComponent(maquinaRep)}&entry.951124748=${encodeURIComponent(notas)}&entry.2133398980=${encodeURIComponent(horometroSalida)}&entry.577390048=${encodeURIComponent(horometroRegreso)}&entry.1752961413=${encodeURIComponent(horasTrabajadas)}`;
+                }
             }
 
             fetch(url, {
                 method: 'GET',
-                mode: 'no-cors' // Required for cross-origin requests without server-side handling
+                mode: 'no-cors'
             })
             .then(response => {
-                // Note: With mode: 'no-cors', response.status will always be 0 for successful requests from Google Forms
-                // You might not get detailed success/error info here, but the data should be sent.
-                // A better approach for real apps would be a server-side script or Google Apps Script.
-                 alert("¡Formulario enviado con éxito! (Verifica Google Sheet)");
-                 limpiarFormulario(formType);
-                 mostrarInicio();
-
-                 // The following checks are unreliable with mode: 'no-cors'
-                 /*
-                if (response.status >= 200 && response.status < 300) {
-                    alert("¡Formulario enviado con éxito!");
-                    limpiarFormulario(formType);
-                    mostrarInicio();
-                } else {
-                     console.error("Error al enviar el formulario:", response.status, response.statusText);
-                     alert("Error al enviar el formulario. Por favor, inténtalo de nuevo.");
-                 }
-                 */
+                alert("¡Formulario enviado con éxito! (Verifica Google Sheet)");
+                limpiarFormulario(formType);
+                mostrarInicio();
             })
             .catch(error => {
                 console.error("Error de red:", error);
                 alert("Error de red. Por favor, verifica tu conexión a Internet.");
             });
 
-            return false; // Prevent default form submission
+            return false;
         }
 
         // Función para limpiar los campos del formulario.
@@ -284,35 +414,50 @@
                 document.getElementById("fecha").value = "";
                 document.getElementById("horometro").value = "";
                 document.getElementById("quienRealiza").value = "";
-                document.getElementById("tipoMantenimiento").value = ""; // Limpia el select
+                document.getElementById("tipoMantenimiento").value = "";
                 document.getElementById("descripcionFalla").value = "";
                 document.getElementById("operador").value = "";
                 document.getElementById("notas").value = "";
-                document.getElementById("tipoMaquinaria").value = ""; // Limpia el select
+                document.getElementById("tipoMaquinaria").value = "";
             } else if (formType === "vehiculos") {
                 document.getElementById("fecha_reporte_vehiculo").value = "";
                 document.getElementById("kilometraje").value = "";
                 document.getElementById("quienRealiza_vehiculo").value = "";
-                document.getElementById("tipoMantenimiento_vehiculo").value = ""; // Limpia el select
+                document.getElementById("tipoMantenimiento_vehiculo").value = "";
                 document.getElementById("descripcionMantenimiento").value = "";
                 document.getElementById("operador_vehiculo").value = "";
                 document.getElementById("notas_vehiculo").value = "";
-                document.getElementById("vehiculo").value = ""; // Limpia el select
+                document.getElementById("vehiculo").value = "";
             } else if (formType === "reporte") {
-                document.getElementById("fecha_reporte").value = "";
-                document.getElementById("material").value = "";
-                document.getElementById("obra").value = "";
-                document.getElementById("noViajes").value = "";
-                document.getElementById("noVale").value = "";
-                document.getElementById("capacidad").value = "";
-                document.getElementById("chofer").value = "";
-                document.getElementById("banco").value = "";
-                document.getElementById("distancia").value = "";
-                document.getElementById("consumoLTKM").value = "";
-                document.getElementById("consumoTotal").value = "";
-                document.getElementById("combustible").value = "";
-                document.getElementById("saldoCombustible").value = "";
-                document.getElementById("maquina_reporte").value = ""; // Limpia el select
+                const maquinaSeleccionada = document.getElementById('maquina').value;
+
+                if (maquinaSeleccionada === 'camion_azul' || maquinaSeleccionada === 'camion_blanco') {
+                    document.getElementById("fecha_camion").value = "";
+                    document.getElementById("material").value = "";
+                    document.getElementById("obra_camion").value = "";
+                    document.getElementById("no_viajes").value = "";
+                    document.getElementById("no_vale").value = "";
+                    document.getElementById("capacidad").value = "";
+                    document.getElementById("chofer").value = "";
+                    document.getElementById("banco").value = "";
+                    document.getElementById("distancia").value = "";
+                    document.getElementById("consumo_lt_km").value = "";
+                    document.getElementById("combustible").value = "";
+                    document.getElementById("saldo_combustible").value = "";
+                } else if (maquinaSeleccionada) {
+                    document.getElementById("fecha_otra").value = "";
+                    document.getElementById("horometro_salida").value = "";
+                    document.getElementById("horometro_regreso").value = "";
+                    document.getElementById("horas_trabajadas").value = "";
+                    document.getElementById("obra_otra").value = "";
+                    document.getElementById("notas").value = "";
+                }
+                document.getElementById('maquina').value = "";
+                // Es importante re-obtener los elementos para asegurar que existan en el DOM actual
+                const camionFields = document.getElementById('campos_camion');
+                const otraMaquinariaFields = document.getElementById('campos_otra_maquinaria');
+                if (camionFields) camionFields.style.display = 'none';
+                if (otraMaquinariaFields) otraMaquinariaFields.style.display = 'none';
             }
         }
 
@@ -324,151 +469,281 @@
             if (formType === "maquinaria") {
                 document.getElementById("formulario-container").style.display = "flex";
                 document.getElementById("formulario-container").innerHTML = `
-                    <div style="background-color: #FFFFFF; padding: 20px; border-radius: 12px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); width: 95%; max-width: 600px;">
-                        <h1 style="font-size: 24px; color: #34495e; margin-bottom: 20px;">BITÁCORA DE MAQUINARIA</h1>
+                    <div class="custom-form-container">
+                        <h2 class="custom-form-title">BITÁCORA DE MAQUINARIA</h2>
                         <form id="formulario-maquinaria" onsubmit="return enviarFormulario('maquinaria');">
-                            <label for="fecha">Fecha:</label>
-                            <input type="date" id="fecha" name="fecha" required><br><br>
-                            <label for="tipoMaquinaria">Tipo de Maquinaria:</label>
-                            <select id="tipoMaquinaria" name="tipoMaquinaria" required>
-                                <option value="">Seleccione una opción</option>
-                                <option value="VIBROCOMPACTADOR1 INGERSOLL SD100D C">VIBROCOMPACTADOR1 INGERSOLL SD100D C</option>
-                                <option value="RETROEXCAVADORA1 EXT 580M EXT">RETROEXCAVADORA1 EXT 580M EXT</option>
-                                <option value="CAMION 2 T600">CAMION 2 T600</option>
-                                <option value="PIPA1">PIPA1</option>
-                                <option value="CAMION3 T600B">CAMION3 T600B</option>
-                                <option value="RETROEXCAVADORA3 580SN">RETROEXCAVADORA3 580SN</option>
-                                <option value="MOTONIVELADORA 1 140H">MOTONIVELADORA 1 140H</option>
-                                <option value="MOTONIVELADORA 12G">MOTONIVELADORA 12G</option>
-                                <option value="VIBROCOMPACTADOR2 CATERPILLAR">VIBROCOMPACTADOR2 CATERPILLAR</option>
-                                <option value="PIPA2 T300">PIPA2 T300</option>
-                                <option value="COMPRESOR1">COMPRESOR1</option>
-                                <option value="COMPRESOR2">COMPRESOR2</option>
-                                <option value="COMPRESOR3">COMPRESOR3</option>
-                                <option value="DIRECCIONAL">DIRECCIONAL</option>
-                                <option value="PLATAFORMA">PLATAFORMA</option>
-                                <option value="TOPO">TOPO</option>
-                                <option value="PATA DE CABRA">PATA DE CABRA</option>
-                                <option value="RETROEXCAVADORA CAT 416D">RETROEXCAVADORA CAT 416D</option>
-                            </select><br><br>
-                            <label for="horometro">Horómetro:</label>
-                            <input type="text" id="horometro" name="horometro" required><br><br>
-                            <label for="quienRealiza">Quién Realiza el Mantenimiento:</label>
-                            <input type="text" id="quienRealiza" name="quienRealiza" required><br><br>
-                            <label for="tipoMantenimiento">Tipo de Mantenimiento:</label>
-                            <select id="tipoMantenimiento" name="tipoMantenimiento" required>
-                                <option value="">Seleccione una opción</option>
-                                <option value="Preventivo">Preventivo</option>
-                                <option value="Correctivo">Correctivo</option>
-                            </select><br><br>
-                            <label for="descripcionFalla">Descripción de la Falla:</label>
-                            <textarea id="descripcionFalla" name="descripcionFalla" rows="4" required></textarea><br><br>
-                            <label for="operador">Operador:</label>
-                            <input type="text" id="operador" name="operador" required><br><br>
-                            <label for="notas">Notas:</label>
-                            <textarea id="notas" name="notas" rows="4"></textarea><br><br>
-                            <button type="submit">Enviar Formulario</button>
-                            <button type="button" class="limpiar-button" onclick="limpiarFormulario('maquinaria')">Limpiar Formulario</button> <button type="button" onclick="mostrarInicio()">Página de Inicio</button>
+                            <div class="custom-form-group">
+                                <label for="fecha" class="custom-form-label">Fecha:</label>
+                                <input type="date" id="fecha" name="fecha" class="custom-input" required>
+                            </div>
+                            <div class="custom-form-group">
+                                <label for="tipoMaquinaria" class="custom-form-label">Tipo de Maquinaria:</label>
+                                <select id="tipoMaquinaria" name="tipoMaquinaria" class="custom-select" required>
+                                    <option value="">Seleccione una opción</option>
+                                    <option value="VIBROCOMPACTADOR1 INGERSOLL SD100D C">VIBROCOMPACTADOR1 INGERSOLL SD100D C</option>
+                                    <option value="RETROEXCAVADORA1 EXT 580M EXT">RETROEXCAVADORA1 EXT 580M EXT</option>
+                                    <option value="CAMION 2 T600">CAMION 2 T600</option>
+                                    <option value="PIPA1">PIPA1</option>
+                                    <option value="CAMION3 T600B">CAMION3 T600B</option>
+                                    <option value="RETROEXCAVADORA3 580SN">RETROEXCAVADORA3 580SN</option>
+                                    <option value="MOTONIVELADORA 1 140H">MOTONIVELADORA 1 140H</option>
+                                    <option value="MOTONIVELADORA 12G">MOTONIVELADORA 12G</option>
+                                    <option value="VIBROCOMPACTADOR2 CATERPILLAR">VIBROCOMPACTADOR2 CATERPILLAR</option>
+                                    <option value="PIPA2 T300">PIPA2 T300</option>
+                                    <option value="COMPRESOR1">COMPRESOR1</option>
+                                    <option value="COMPRESOR2">COMPRESOR2</option>
+                                    <option value="COMPRESOR3">COMPRESOR3</option>
+                                    <option value="DIRECCIONAL">DIRECCIONAL</option>
+                                    <option value="PLATAFORMA">PLATAFORMA</option>
+                                    <option value="TOPO">TOPO</option>
+                                    <option value="PATA DE CABRA">PATA DE CABRA</option>
+                                    <option value="RETROEXCAVADORA CAT 416D">RETROEXCAVADORA CAT 416D</option>
+                                </select>
+                            </div>
+                            <div class="custom-form-group">
+                                <label for="horometro" class="custom-form-label">Horómetro:</label>
+                                <input type="text" id="horometro" name="horometro" class="custom-input" required>
+                            </div>
+                            <div class="custom-form-group">
+                                <label for="quienRealiza" class="custom-form-label">Quién Realiza el Mantenimiento:</label>
+                                <input type="text" id="quienRealiza" name="quienRealiza" class="custom-input" required>
+                            </div>
+                            <div class="custom-form-group">
+                                <label for="tipoMantenimiento" class="custom-form-label">Tipo de Mantenimiento:</label>
+                                <select id="tipoMantenimiento" name="tipoMantenimiento" class="custom-select" required>
+                                    <option value="">Seleccione una opción</option>
+                                    <option value="Preventivo">Preventivo</option>
+                                    <option value="Correctivo">Correctivo</option>
+                                </select>
+                            </div>
+                            <div class="custom-form-group">
+                                <label for="descripcionFalla" class="custom-form-label">Descripción de la Falla:</label>
+                                <textarea id="descripcionFalla" name="descripcionFalla" class="custom-input" rows="4" required></textarea>
+                            </div>
+                            <div class="custom-form-group">
+                                <label for="operador" class="custom-form-label">Operador:</label>
+                                <input type="text" id="operador" name="operador" class="custom-input" required>
+                            </div>
+                            <div class="custom-form-group">
+                                <label for="notas" class="custom-form-label">Notas:</label>
+                                <textarea id="notas" name="notas" class="custom-input" rows="4"></textarea>
+                            </div>
+                            <button type="submit" class="custom-button">Enviar Formulario</button>
+                            <button type="button" class="custom-button limpiar-button" onclick="limpiarFormulario('maquinaria')">Limpiar Formulario</button>
+                            <button type="button" class="custom-button home-button" onclick="mostrarInicio()">Página de Inicio</button>
                         </form>
                     </div>
                 `;
             } else if (formType === "vehiculos") {
                 document.getElementById("formulario-container").style.display = "flex";
                 document.getElementById("formulario-container").innerHTML = `
-                    <div style="background-color: #FFFFFF; padding: 20px; border-radius: 12px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); width: 95%; max-width: 600px;">
-                        <h1 style="font-size: 24px; color: #34495e; margin-bottom: 20px;">BITÁCORA DE VEHÍCULOS</h1>
+                    <div class="custom-form-container">
+                        <h2 class="custom-form-title">BITÁCORA DE VEHÍCULOS</h2>
                         <form id="formulario-vehiculos" onsubmit="return enviarFormulario('vehiculos');">
-                            <label for="fecha_reporte_vehiculo">Fecha de Reporte:</label>
-                            <input type="date" id="fecha_reporte_vehiculo" name="fecha_reporte_vehiculo" required><br><br>
-                            <label for="vehiculo">Vehículo:</label>
-                            <select id="vehiculo" name="vehiculo" required>
-                                <option value="">Seleccione una opción</option>
-                                <option value="RAV4 2018">RAV4 2018</option>
-                                <option value="YARIS 2016">YARIS 2016</option>
-                                <option value="AVEO 2018">AVEO 2018</option>
-                                <option value="FORD-150 2014">FORD-150 2014</option>
-                                <option value="HILUX 1 2018">HILUX 1 2018</option>
-                                <option value="HILUX 2 2018">HILUX 2 2018</option>
-                                <option value="HILUX 3 2018">HILUX 3 2018</option>
-                                <option value="HILUX 4 2018">HILUX 4 2018</option>
-                                <option value="NP 300 2018">NP 300 2018</option>
-                                <option value="RAM700 2018">RAM700 2018</option>
-                                <option value="RAV4 LIMITEDHV 2021">RAV4 LIMITEDHV 2021</option>
-                            </select><br><br>
-                            <label for="kilometraje">Kilometraje:</label>
-                            <input type="text" id="kilometraje" name="kilometraje" required><br><br>
-                            <label for="quienRealiza_vehiculo">Quién Realiza el Mantenimiento:</label>
-                            <input type="text" id="quienRealiza_vehiculo" name="quienRealiza_vehiculo" required><br><br>
-                            <label for="tipoMantenimiento_vehiculo">Tipo de Mantenimiento:</label>
-                            <select id="tipoMantenimiento_vehiculo" name="tipoMantenimiento_vehiculo" required>
-                                <option value="">Seleccione una opción</option>
-                                <option value="Preventivo">Preventivo</option>
-                                <option value="Correctivo">Correctivo</option>
-                            </select><br><br>
-                            <label for="descripcionMantenimiento">Descripción del Mantenimiento:</label>
-                            <textarea id="descripcionMantenimiento" name="descripcionMantenimiento" rows="4" required></textarea><br><br>
-                            <label for="operador_vehiculo">Operador:</label>
-                            <input type="text" id="operador_vehiculo" name="operador_vehiculo" required><br><br>
-                            <label for="notas_vehiculo">Notas:</label>
-                            <textarea id="notas_vehiculo" name="notas_vehiculo" rows="4"></textarea><br><br>
-                            <button type="submit">Enviar Formulario de Vehículos</button>
-                            <button type="button" class="limpiar-button" onclick="limpiarFormulario('vehiculos')">Limpiar Formulario</button> <button type="button" onclick="mostrarInicio()">Página de Inicio</button>
+                            <div class="custom-form-group">
+                                <label for="fecha_reporte_vehiculo" class="custom-form-label">Fecha de Reporte:</label>
+                                <input type="date" id="fecha_reporte_vehiculo" name="fecha_reporte_vehiculo" class="custom-input" required>
+                            </div>
+                            <div class="custom-form-group">
+                                <label for="vehiculo" class="custom-form-label">Vehículo:</label>
+                                <select id="vehiculo" name="vehiculo" class="custom-select" required>
+                                    <option value="">Seleccione una opción</option>
+                                    <option value="RAV4 2018">RAV4 2018</option>
+                                    <option value="YARIS 2016">YARIS 2016</option>
+                                    <option value="AVEO 2018">AVEO 2018</option>
+                                    <option value="FORD-150 2014">FORD-150 2014</option>
+                                    <option value="HILUX 1 2018">HILUX 1 2018</option>
+                                    <option value="HILUX 2 2018">HILUX 2 2018</option>
+                                    <option value="HILUX 3 2018">HILUX 3 2018</option>
+                                    <option value="HILUX 4 2018">HILUX 4 2018</option>
+                                    <option value="NP 300 2018">NP 300 2018</option>
+                                    <option value="RAM700 2018">RAM700 2018</option>
+                                    <option value="RAV4 LIMITEDHV 2021">RAV4 LIMITEDHV 2021</option>
+                                </select>
+                            </div>
+                            <div class="custom-form-group">
+                                <label for="kilometraje" class="custom-form-label">Kilometraje:</label>
+                                <input type="text" id="kilometraje" name="kilometraje" class="custom-input" required>
+                            </div>
+                            <div class="custom-form-group">
+                                <label for="quienRealiza_vehiculo" class="custom-form-label">Quién Realiza el Mantenimiento:</label>
+                                <input type="text" id="quienRealiza_vehiculo" name="quienRealiza_vehiculo" class="custom-input" required>
+                            </div>
+                            <div class="custom-form-group">
+                                <label for="tipoMantenimiento_vehiculo" class="custom-form-label">Tipo de Mantenimiento:</label>
+                                <select id="tipoMantenimiento_vehiculo" name="tipoMantenimiento_vehiculo" class="custom-select" required>
+                                    <option value="">Seleccione una opción</option>
+                                    <option value="Preventivo">Preventivo</option>
+                                    <option value="Correctivo">Correctivo</option>
+                                </select>
+                            </div>
+                            <div class="custom-form-group">
+                                <label for="descripcionMantenimiento" class="custom-form-label">Descripción del Mantenimiento:</label>
+                                <textarea id="descripcionMantenimiento" name="descripcionMantenimiento" class="custom-input" rows="4" required></textarea>
+                            </div>
+                            <div class="custom-form-group">
+                                <label for="operador_vehiculo" class="custom-form-label">Operador:</label>
+                                <input type="text" id="operador_vehiculo" name="operador_vehiculo" class="custom-input" required>
+                            </div>
+                            <div class="custom-form-group">
+                                <label for="notas_vehiculo" class="custom-form-label">Notas:</label>
+                                <textarea id="notas_vehiculo" name="notas_vehiculo" class="custom-input" rows="4"></textarea>
+                            </div>
+                            <button type="submit" class="custom-button">Enviar Formulario de Vehículos</button>
+                            <button type="button" class="custom-button limpiar-button" onclick="limpiarFormulario('vehiculos')">Limpiar Formulario</button>
+                            <button type="button" class="custom-button home-button" onclick="mostrarInicio()">Página de Inicio</button>
                         </form>
                     </div>
                 `;
             } else if (formType === "reporte") {
                 document.getElementById("formulario-container").style.display = "flex";
                 document.getElementById("formulario-container").innerHTML = `
-                    <div style="background-color: #FFFFFF; padding: 20px; border-radius: 12px; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); width: 95%; max-width: 600px;">
-                        <h1 style="font-size: 24px; color: #34495e; margin-bottom: 20px;">REPORTE DE ACTIVIDADES DE MAQUINARIA</h1>
-                        <form id="formulario-reporte" onsubmit="return enviarFormulario('reporte');">
-                            <label for="fecha_reporte">Fecha del Reporte:</label>
-                            <input type="date" id="fecha_reporte" name="fecha_reporte" required><br><br>
-                            <label for="maquina_reporte">Vehículo:</label>
-                            <select id="maquina_reporte" name="maquina_reporte" required>
-                                <option value="">Seleccione una opción</option>
-                                <option value="CAMION AZUL">CAMION AZUL</option>
-                                <option value="CAMION BLANCO">CAMION BLANCO</option>
-                                <option value="MOTO 12G">MOTO 12G</option>
-                                <option value="MOTO 140H">MOTO 140H</option>
-                                <option value="Retroexcavadora 580 SUPER N">Retroexcavadora 580 SUPER N</option>
-                                <option value="Retroexcavadora 580 M">Retroexcavadora 580 M</option>
-                                <option value="Retroexcavadora CAT 416D">Retroexcavadora CAT 416D</option>
-                                <option value="VIBRO CAT">VIBRO CAT</option>
-                                <option value="PIPA FRAIGHTLINES">PIPA FRAIGHTLINES</option>
-                                <option value="PIPA KENWORTH">PIPA KENWORTH</option>
-                                <option value="PATA DE CABRA CP-553">PATA DE CABRA CP-553</option>
-                                <option value="BOMBA ACHIQUE 3''">BOMBA ACHIQUE 3''</option>
-                            </select><br><br>
-                            <label for="material">Material:</label>
-                            <input type="text" id="material" name="material" required><br><br>
-                            <label for="obra">Obra:</label>
-                            <input type="text" id="obra" name="obra" required><br><br>
-                            <label for="noViajes">No. Viajes:</label>
-                            <input type="number" id="noViajes" name="noViajes" required><br><br>
-                            <label for="noVale">No. Vale:</label>
-                            <input type="text" id="noVale" name="noVale" required><br><br>
-                            <label for="capacidad">Capacidad:</label>
-                            <input type="text" id="capacidad" name="capacidad" required><br><br>
-                            <label for="chofer">Chofer:</label>
-                            <input type="text" id="chofer" name="chofer" required><br><br>
-                            <label for="banco">Banco:</label>
-                            <input type="text" id="banco" name="banco" required><br><br>
-                            <label for="distancia">Distancia:</label>
-                            <input type="text" id="distancia" name="distancia" required><br><br>
-                            <label for="consumoLTKM">Consumo LT/KM:</label>
-                            <input type="text" id="consumoLTKM" name="consumoLTKM" required><br><br>
-                            <label for="consumoTotal">Consumo Total:</label>
-                            <input type="text" id="consumoTotal" name="consumoTotal" required><br><br>
-                            <label for="combustible">Combustible:</label>
-                            <input type="text" id="combustible" name="combustible" required><br><br>
-                            <label for="saldoCombustible">Saldo de Combustible:</label>
-                            <input type="text" id="saldoCombustible" name="saldoCombustible" required><br><br>
-                            <button type="submit">Generar Reporte</button>
-                             <button type="button" class="limpiar-button" onclick="limpiarFormulario('reporte')">Limpiar Formulario</button> <button type="button" onclick="mostrarInicio()">Página de Inicio</button>
+                    <div class="custom-form-container">
+                        <header class="custom-form-header">
+                            <h2 class="custom-form-title">Reporte de Actividades de Maquinaria</h2>
+                            <p class="custom-form-description">Por favor, complete el siguiente formulario para registrar las actividades de la maquinaria.</p>
+                        </header>
+                        <form id="maquinariaForm" onsubmit="return enviarFormulario('reporte');" class="mt-8 space-y-6">
+                            <div class="custom-form-group">
+                                <label for="maquina" class="custom-form-label">Seleccione la Maquinaria:</label>
+                                <select id="maquina" name="maquina" class="custom-select" required>
+                                    <option value="">Seleccione...</option>
+                                    <option value="camion_azul">Camión Azul</option>
+                                    <option value="camion_blanco">Camión Blanco</option>
+                                    <option value="moto_140h">MOTO 140H</option>
+                                    <option value="moto_12g">MOTO 12G</option>
+                                    <option value="retroexcavadora_580_super_n">RETROEXCAVADORA 580 SUPER N</option>
+                                    <option value="retroexcavadora_580_m">RETROEXCAVADORA 580 M</option>
+                                    <option value="retroexcavadora_cat_416d">RETROEXCAVADORA CAT 416D</option>
+                                    <option value="vibro_cat">VIBRO CAT</option>
+                                    <option value="pipa_freightliner">PIPA FREIGHTLINER</option>
+                                    <option value="pipa_kenworth">PIPA KENWORTH</option>
+                                    <option value="pata_de_cabra_cp_553">PATA DE CABRA CP-553</option>
+                                    <option value="bomba_achique_3">BOMBA ACHIQUE 3''</option>
+                                </select>
+                            </div>
+
+                            <div class="camion-fields" id="campos_camion">
+                                <div class="custom-form-group">
+                                    <label for="fecha_camion" class="custom-form-label">Fecha:</label>
+                                    <input type="date" id="fecha_camion" name="fecha_camion" class="custom-input" required>
+                                </div>
+                                <div class="custom-form-group">
+                                    <label for="material" class="custom-form-label">Material:</label>
+                                    <input type="text" id="material" name="material" class="custom-input" required>
+                                </div>
+                                <div class="custom-form-group">
+                                    <label for="obra_camion" class="custom-form-label">Obra:</label>
+                                    <input type="text" id="obra_camion" name="obra_camion" class="custom-input" required>
+                                </div>
+                                <div class="custom-form-group">
+                                    <label for="no_viajes" class="custom-form-label">No. de Viajes:</label>
+                                    <input type="number" id="no_viajes" name="no_viajes" class="custom-input" required>
+                                </div>
+                                <div class="custom-form-group">
+                                    <label for="no_vale" class="custom-form-label">No. de Vale:</label>
+                                    <input type="text" id="no_vale" name="no_vale" class="custom-input" required>
+                                </div>
+                                <div class="custom-form-group">
+                                    <label for="capacidad" class="custom-form-label">Capacidad:</label>
+                                    <input type="text" id="capacidad" name="capacidad" class="custom-input" required>
+                                </div>
+                                <div class="custom-form-group">
+                                    <label for="chofer" class="custom-form-label">Chofer:</label>
+                                    <input type="text" id="chofer" name="chofer" class="custom-input" required>
+                                </div>
+                                <div class="custom-form-group">
+                                    <label for="banco" class="custom-form-label">Banco:</label>
+                                    <input type="text" id="banco" name="banco" class="custom-input" required>
+                                </div>
+                                <div class="custom-form-group">
+                                    <label for="distancia" class="custom-form-label">Distancia:</label>
+                                    <input type="text" id="distancia" name="distancia" class="custom-input" required>
+                                </div>
+                                <div class="custom-form-group">
+                                    <label for="consumo_lt_km" class="custom-form-label">Consumo LT/KM:</label>
+                                    <input type="text" id="consumo_lt_km" name="consumo_lt_km" class="custom-input" required>
+                                </div>
+                                <div class="custom-form-group">
+                                    <label for="combustible" class="custom-form-label">Combustible:</label>
+                                    <input type="text" id="combustible" name="combustible" class="custom-input" required>
+                                </div>
+                                <div class="custom-form-group">
+                                    <label for="saldo_combustible" class="custom-form-label">Saldo de Combustible:</label>
+                                    <input type="text" id="saldo_combustible" name="saldo_combustible" class="custom-input" required>
+                                </div>
+                            </div>
+
+                            <div class="otra-maquinaria-fields" id="campos_otra_maquinaria">
+                                <div class="custom-form-group">
+                                    <label for="fecha_otra" class="custom-form-label">Fecha:</label>
+                                    <input type="date" id="fecha_otra" name="fecha_otra" class="custom-input" required>
+                                </div>
+                                <div class="custom-form-group">
+                                    <label for="horometro_salida" class="custom-form-label">Horómetro o Salida:</label>
+                                    <input type="text" id="horometro_salida" name="horometro_salida" class="custom-input" required>
+                                </div>
+                                <div class="custom-form-group">
+                                    <label for="horometro_regreso" class="custom-form-label">Horómetro o Regreso:</label>
+                                    <input type="text" id="horometro_regreso" name="horometro_regreso" class="custom-input" required>
+                                </div>
+                                <div class="custom-form-group">
+                                    <label for="horas_trabajadas" class="custom-form-label">Horas Trabajadas:</label>
+                                    <input type="text" id="horas_trabajadas" name="horas_trabajadas" class="custom-input" readonly>
+                                </div>
+                                <div class="custom-form-group">
+                                    <label for="obra_otra" class="custom-form-label">Obra:</label>
+                                    <input type="text" id="obra_otra" name="obra_otra" class="custom-input" required>
+                                </div>
+                                <div class="custom-form-group">
+                                    <label for="notas" class="custom-form-label">Notas:</label>
+                                    <textarea id="notas" name="notas" class="custom-input" rows="4" required></textarea>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="custom-button">Guardar Registro</button>
+                            <button type="button" class="custom-button limpiar-button" onclick="limpiarFormulario('reporte')">Limpiar Formulario</button>
+                            <button type="button" class="custom-button home-button" onclick="mostrarInicio()">Página de Inicio</button>
                         </form>
                     </div>
                 `;
+                // Re-inicializar los listeners y elementos del DOM para el nuevo formulario
+                const maquinaSelect = document.getElementById('maquina');
+                const camionFields = document.getElementById('campos_camion');
+                const otraMaquinariaFields = document.getElementById('campos_otra_maquinaria');
+                const horometroSalidaInput = document.getElementById('horometro_salida');
+                const horometroRegresoInput = document.getElementById('horometro_regreso');
+                const horasTrabajadasInput = document.getElementById('horas_trabajadas');
+
+                maquinaSelect.addEventListener('change', function() {
+                    if (this.value === 'camion_azul' || this.value === 'camion_blanco') {
+                        camionFields.style.display = 'block';
+                        otraMaquinariaFields.style.display = 'none';
+                    } else if (this.value) {
+                        camionFields.style.display = 'none';
+                        otraMaquinariaFields.style.display = 'block';
+                    } else {
+                        camionFields.style.display = 'none';
+                        otraMaquinariaFields.style.display = 'none';
+                    }
+                });
+
+                if (horometroSalidaInput && horometroRegresoInput && horasTrabajadasInput) {
+                    horometroSalidaInput.addEventListener('input', calcularHorasTrabajadas);
+                    horometroRegresoInput.addEventListener('input', calcularHorasTrabajadas);
+                }
+
+                function calcularHorasTrabajadas() {
+                    const salida = parseFloat(horometroSalidaInput.value);
+                    const regreso = parseFloat(horometroRegresoInput.value);
+
+                    if (!isNaN(salida) && !isNaN(regreso)) {
+                        const horas = regreso - salida;
+                        horasTrabajadasInput.value = horas.toFixed(2);
+                    } else {
+                        horasTrabajadasInput.value = '';
+                    }
+                }
             }
         }
 
@@ -477,6 +752,37 @@
             document.getElementById("formulario-container").style.display = "none";
             document.getElementById("menu-principal").style.display = "flex";
         }
+
+        // Función para mostrar el recordatorio
+        function mostrarRecordatorio() {
+            // Verifica si ya se ha mostrado el recordatorio hoy
+            // Obtener la fecha de hoy en formato 'YYYY-MM-DD'
+            const today = new Date().toISOString().slice(0, 10);
+            const lastShownDate = localStorage.getItem('recordatorioMostradoHoy');
+
+            if (lastShownDate !== today) { // Solo mostrar si no se ha mostrado hoy
+                // Crea el elemento del recordatorio
+                const recordatorioDiv = document.createElement('div');
+                recordatorioDiv.className = 'recordatorio-container';
+                recordatorioDiv.textContent = '¡Aún no llenas tu registro de actividades diarias, recuerda que es tu asistencia del día!';
+
+                // Agrega el recordatorio al body
+                document.body.appendChild(recordatorioDiv);
+
+                // Guarda la fecha de hoy en localStorage
+                localStorage.setItem('recordatorioMostradoHoy', today);
+
+                // Opcional: desaparecer el recordatorio después de un tiempo
+                setTimeout(() => {
+                    recordatorioDiv.remove();
+                }, 10000); // 10 segundos
+            }
+        }
+
+        // Función para verificar si se debe mostrar el recordatorio (al cargar la página)
+        window.onload = function() {
+            mostrarRecordatorio();
+        };
 
     </script>
 </head>
@@ -496,7 +802,7 @@
     </div>
 
     <div id="formulario-container">
-        </div>
+    </div>
 
 </body>
 </html>
