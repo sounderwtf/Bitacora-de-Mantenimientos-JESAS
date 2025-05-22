@@ -111,91 +111,6 @@
             min-height: 100px;
         }
 
-        /* Estilo específico para el botón de limpiar, si no usa custom-button */
-        /*
-        button.limpiar-button {
-            background-color: #ccc;
-            color: #2c3e50;
-            margin-top: 5px;
-        }
-
-        button.limpiar-button:hover {
-            background-color: #b3b3b3;
-        }
-        */
-
-
-        #formulario-container {
-            display: none; /* Initially hidden, managed by JS */
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            min-height: 100vh;
-            align-items: center;
-            justify-content: center;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 10;
-        }
-
-        #imagen-link-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-top: 20px;
-            margin-bottom: 20px;
-            width: 100%;
-        }
-
-        #imagen-inferior {
-            width: auto;
-            height: 200px;
-            opacity: 0.8;
-            margin-right: 20px;
-        }
-
-        #link-empresa {
-            text-decoration: none;
-            color: #2c3e50;
-            font-weight: bold;
-            font-size: 18px;
-        }
-
-        #link-empresa:hover {
-            color: #3498db;
-        }
-
-        .info-empresa {
-            text-align: center;
-            font-size: 14px;
-            color: #555;
-            margin-top: 10px;
-        }
-
-        .recordatorio-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background-color: #fff;
-            padding: 1rem;
-            border-radius: 0.375rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            z-index: 10;
-            border: 1px solid #f56565;
-            color: #f56565;
-            animation: fadeIn 1s ease-in-out, pulse 2s infinite alternate;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to   { opacity: 1; }
-        }
-        @keyframes pulse {
-            from { transform: scale(1); }
-            to   { transform: scale(1.05); }
-        }
-
-        /* Estilos de codigo2.html y para los nuevos botones */
         .custom-form-container {
             background-color: #f7fafc;
             border-radius: 0.5rem;
@@ -301,9 +216,32 @@
         .otra-maquinaria-fields {
             display: none;
         }
+
+        /* Estilos para el mensaje personalizado */
+        .mensaje-personalizado {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #4CAF50; /* Color verde para éxito */
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            z-index: 1000;
+            text-align: center;
+        }
+
+        .info-empresa { /* Nuevo estilo para la información de la empresa */
+            text-align: center;
+            font-size: 16px;
+            color: #555;
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
     </style>
     <script>
-        // Función para obtener los parámetros de la URL. (No se usa en este código, pero se mantiene)
+        // Función para obtener los parámetros de la URL. (No se usa en este código)
         function getUrlVars() {
             let vars = {};
             let parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m, key, value) {
@@ -312,100 +250,109 @@
             return vars;
         }
 
-        // Función para enviar los datos del formulario a Google Forms.
-        function enviarFormulario(formType) {
-            let formUrl = "";
-            let url = "";
-            let fechaReporte, kilometraje, quienRealiza, tipoMantenimiento, descripcionMantenimiento, operador, notas, vehiculo;
-            let fecha, horometro, tipoMantenimientoMaq, descripcionFalla, operadorMaq, notasMaq, tipoMaquinaria;
-            let fechaRep, material, obra, noViajes, noVale, capacidad, chofer, banco, distancia, consumoLTKM, consumoTotal, combustible, saldoCombustible, maquinaRep;
+        // Función para enviar los datos del formulario a Google Sheets a través de Apps Script.
+        async function enviarFormulario(formType) {
+            console.log("La función enviarFormulario ha sido llamada para:", formType); 
+
+            // *** IMPORTANTE: REEMPLAZA ESTA URL ***
+            // Esta será la URL de tu aplicación web de Google Apps Script.
+            // La obtendrás después de desplegar el script de Apps Script (Paso 2.5).
+            const appsScriptUrl = "https://script.google.com/macros/s/AKfycbyxN4skJfh2DZzHTA3dL7ds4a64Wptna13iGNbt4WuvKEgOiujHcJvThGYyRMWsTihr/exec"; 
+
+            let dataToSend = {}; // Objeto para almacenar los datos a enviar
 
             if (formType === "maquinaria") {
-                formUrl = "https://script.google.com/macros/s/AKfycbx7kmWG1hBK9GcIAWWsniWn0MOHPL9BMZ7pW3KvFkfdudUtCjPuDM00IlH6hSvp9TjTkg/exec";
-                fecha = document.getElementById("fecha").value;
-                horometro = document.getElementById("horometro").value;
-                quienRealiza = document.getElementById("quienRealiza").value;
-                tipoMantenimientoMaq = document.getElementById("tipoMantenimiento").value;
-                descripcionFalla = document.getElementById("descripcionFalla").value;
-                operadorMaq = document.getElementById("operador").value;
-                notasMaq = document.getElementById("notas").value;
-                tipoMaquinaria = document.getElementById("tipoMaquinaria").value;
-                url = `${formUrl}?entry.1188599395=${encodeURIComponent(fecha)}&entry.946574511=${encodeURIComponent(horometro)}&entry.2139075027=${encodeURIComponent(quienRealiza)}&entry.487496965=${encodeURIComponent(tipoMantenimientoMaq)}&entry.1655943125=${encodeURIComponent(descripcionFalla)}&entry.83392952=${encodeURIComponent(operadorMaq)}&entry.951124748=${encodeURIComponent(notasMaq)}&entry.104610242=${encodeURIComponent(tipoMaquinaria)}`;
+                dataToSend = {
+                    type: "maquinaria", // Identificador para Apps Script
+                    fecha: document.getElementById("fecha").value,
+                    horometro: document.getElementById("horometro").value,
+                    quienRealiza: document.getElementById("quienRealiza").value,
+                    tipoMantenimientoMaq: document.getElementById("tipoMantenimiento").value,
+                    descripcionFalla: document.getElementById("descripcionFalla").value,
+                    operadorMaq: document.getElementById("operador").value,
+                    notasMaq: document.getElementById("notas").value,
+                    tipoMaquinaria: document.getElementById("tipoMaquinaria").value // Nombre completo de la maquinaria
+                };
             } else if (formType === "vehiculos") {
-                formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSeSEFeNVbsawAliFLoYj3oaXgfRjCJ3gq_H0yC8X9alCrBIDg/formResponse";
-                fechaReporte = document.getElementById("fecha_reporte_vehiculo").value;
-                kilometraje = document.getElementById("kilometraje").value;
-                quienRealiza = document.getElementById("quienRealiza_vehiculo").value;
-                tipoMantenimiento = document.getElementById("tipoMantenimiento_vehiculo").value;
-                descripcionMantenimiento = document.getElementById("descripcionMantenimiento").value;
-                operador = document.getElementById("operador_vehiculo").value;
-                notas = document.getElementById("notas_vehiculo").value;
-                vehiculo = document.getElementById("vehiculo").value;
-                url = `${formUrl}?entry.1638048660=${encodeURIComponent(fechaReporte)}&entry.2133398980=${encodeURIComponent(kilometraje)}&entry.577390048=${encodeURIComponent(quienRealiza)}&entry.1752961413=${encodeURIComponent(tipoMantenimiento)}&entry.1174496201=${encodeURIComponent(descripcionMantenimiento)}&entry.1283041917=${encodeURIComponent(operador)}&entry.1784723540=${encodeURIComponent(notas)}&entry.1830403408=${encodeURIComponent(vehiculo)}`;
+                dataToSend = {
+                    type: "vehiculos", // Identificador para Apps Script
+                    fechaReporte: document.getElementById("fecha_reporte_vehiculo").value,
+                    kilometraje: document.getElementById("kilometraje").value,
+                    quienRealiza: document.getElementById("quienRealiza_vehiculo").value,
+                    tipoMantenimiento: document.getElementById("tipoMantenimiento_vehiculo").value,
+                    descripcionMantenimiento: document.getElementById("descripcionMantenimiento").value,
+                    operador: document.getElementById("operador_vehiculo").value,
+                    notas: document.getElementById("notas_vehiculo").value,
+                    vehiculo: document.getElementById("vehiculo").value
+                };
             } else if (formType === "reporte") {
-                formUrl = "https://docs.google.com/forms/d/e/1FAIpQLSf-KP92rEzes-fIlAD46P3pP4uZa7N_dywVKicxK24RlWQd0Q/formResponse";
-
                 const maquinaSeleccionada = document.getElementById('maquina').value;
+                dataToSend = {
+                    type: "reporte", // Identificador para Apps Script
+                    maquinaSeleccionada: maquinaSeleccionada
+                };
 
                 if (maquinaSeleccionada === 'camion_azul' || maquinaSeleccionada === 'camion_blanco') {
-                    fechaRep = document.getElementById("fecha_camion").value;
-                    material = document.getElementById("material").value;
-                    obra = document.getElementById("obra_camion").value;
-                    noViajes = document.getElementById("no_viajes").value;
-                    noVale = document.getElementById("no_vale").value;
-                    capacidad = document.getElementById("capacidad").value;
-                    chofer = document.getElementById("chofer").value;
-                    banco = document.getElementById("banco").value;
-                    distancia = document.getElementById("distancia").value;
-                    consumoLTKM = document.getElementById("consumo_lt_km").value;
-                    combustible = document.getElementById("combustible").value;
-                    saldoCombustible = document.getElementById("saldo_combustible").value;
-                    maquinaRep = maquinaSeleccionada === 'camion_azul' ? 'CAMION AZUL' : 'CAMION BLANCO';
-
-                    url = `${formUrl}?entry.1374104361=${encodeURIComponent(fechaRep)}&entry.1386567991=${encodeURIComponent(material)}&entry.779606912=${encodeURIComponent(obra)}&entry.1715069500=${encodeURIComponent(noViajes)}&entry.1534523501=${encodeURIComponent(noVale)}&entry.1615038838=${encodeURIComponent(capacidad)}&entry.796410296=${encodeURIComponent(chofer)}&entry.1635175379=${encodeURIComponent(banco)}&entry.1847012257=${encodeURIComponent(distancia)}&entry.362499978=${encodeURIComponent(consumoLTKM)}&entry.1650964098=${encodeURIComponent(combustible)}&entry.1025594978=${encodeURIComponent(saldoCombustible)}&entry.1860383735=${encodeURIComponent(maquinaRep)}`;
-
+                    dataToSend.fechaRep = document.getElementById("fecha_camion").value;
+                    dataToSend.material = document.getElementById("material").value;
+                    dataToSend.obra = document.getElementById("obra_camion").value;
+                    dataToSend.noViajes = document.getElementById("no_viajes").value;
+                    dataToSend.noVale = document.getElementById("no_vale").value;
+                    dataToSend.capacidad = document.getElementById("capacidad").value;
+                    dataToSend.chofer = document.getElementById("chofer").value;
+                    dataToSend.banco = document.getElementById("banco").value;
+                    dataToSend.distancia = document.getElementById("distancia").value;
+                    dataToSend.consumoLTKM = document.getElementById("consumo_lt_km").value;
+                    dataToSend.combustible = document.getElementById("combustible").value;
+                    dataToSend.saldoCombustible = document.getElementById("saldo_combustible").value;
+                    dataToSend.maquinaRep = maquinaSeleccionada === 'camion_azul' ? 'CAMION AZUL' : 'CAMION BLANCO';
                 } else {
-                    fechaRep = document.getElementById("fecha_otra").value;
-                    const horometroSalida = document.getElementById("horometro_salida").value;
-                    const horometroRegreso = document.getElementById("horometro_regreso").value;
-                    const horasTrabajadas = document.getElementById("horas_trabajadas").value;
-                    obra = document.getElementById("obra_otra").value;
-                    notas = document.getElementById("notas").value;
-                    maquinaRep = '';
-
+                    dataToSend.fechaRep = document.getElementById("fecha_otra").value;
+                    dataToSend.horometroSalida = document.getElementById("horometro_salida").value;
+                    dataToSend.horometroRegreso = document.getElementById("horometro_regreso").value;
+                    dataToSend.horasTrabajadas = document.getElementById("horas_trabajadas").value;
+                    dataToSend.obra = document.getElementById("obra_otra").value;
+                    dataToSend.notas = document.getElementById("notas").value; // Notas para otras maquinarias
+                    
                     switch (maquinaSeleccionada) {
-                        case 'moto_140h': maquinaRep = 'MOTO 140H'; break;
-                        case 'moto_12g': maquinaRep = 'MOTO 12G'; break;
-                        case 'retroexcavadora_580_super_n': maquinaRep = 'Retroexcavadora 580 SUPER N'; break;
-                        case 'retroexcavadora_580_m': maquinaRep = 'Retroexcavadora 580 M'; break;
-                        case 'retroexcavadora_cat_416d': maquinaRep = 'Retroexcavadora CAT 416D'; break;
-                        case 'vibro_cat': maquinaRep = 'VIBRO CAT'; break;
-                        case 'pipa_freightliner': maquinaRep = 'PIPA FREIGHTLINER'; break;
-                        case 'pipa_kenworth': maquinaRep = 'PIPA KENWORTH'; break;
-                        case 'pata_de_cabra_cp_553': maquinaRep = 'PATA DE CABRA CP-553'; break;
-                        case 'bomba_achique_3': maquinaRep = 'BOMBA ACHIQUE 3\'\''; break;
-                        default: maquinaRep = maquinaSeleccionada; break;
+                        case 'moto_140h': dataToSend.maquinaRep = 'MOTO 140H'; break;
+                        case 'moto_12g': dataToSend.maquinaRep = 'MOTO 12G'; break;
+                        case 'retroexcavadora_580_super_n': dataToSend.maquinaRep = 'Retroexcavadora 580 SUPER N'; break;
+                        case 'retroexcavadora_580_m': dataToSend.maquinaRep = 'Retroexcavadora 580 M'; break;
+                        case 'retroexcavadora_cat_416d': dataToSend.maquinaRep = 'Retroexcavadora CAT 416D'; break;
+                        case 'vibro_cat': dataToSend.maquinaRep = 'VIBRO CAT'; break;
+                        case 'pipa_freightliner': dataToSend.maquinaRep = 'PIPA FREIGHTLINER'; break;
+                        case 'pipa_kenworth': dataToSend.maquinaRep = 'PIPA KENWORTH'; break;
+                        case 'pata_de_cabra_cp_553': dataToSend.maquinaRep = 'PATA DE CABRA CP-553'; break;
+                        case 'bomba_achique_3': dataToSend.maquinaRep = 'BOMBA ACHIQUE 3\'\''; break;
+                        default: dataToSend.maquinaRep = maquinaSeleccionada; break;
                     }
-
-                    url = `${formUrl}?entry.1374104361=${encodeURIComponent(fechaRep)}&entry.779606912=${encodeURIComponent(obra)}&entry.1860383735=${encodeURIComponent(maquinaRep)}&entry.951124748=${encodeURIComponent(notas)}&entry.2133398980=${encodeURIComponent(horometroSalida)}&entry.577390048=${encodeURIComponent(horometroRegreso)}&entry.1752961413=${encodeURIComponent(horasTrabajadas)}`;
                 }
             }
 
-            fetch(url, {
-                method: 'GET',
-                mode: 'no-cors'
-            })
-            .then(response => {
-                alert("¡Formulario enviado con éxito! (Verifica Google Sheet)");
+            console.log("Datos a enviar:", dataToSend); // Para depuración
+
+            try {
+                const response = await fetch(appsScriptUrl, {
+                    method: 'POST',
+                    mode: 'no-cors', // Necesario para evitar errores CORS al enviar a Apps Script
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded', 
+                    },
+                    body: new URLSearchParams(dataToSend).toString() 
+                });
+
+                console.log("Solicitud enviada a Google Apps Script. Respuesta (no-cors):", response);
+                mostrarMensaje("¡Formulario de " + formType + " enviado con éxito a Google Sheets!");
                 limpiarFormulario(formType);
                 mostrarInicio();
-            })
-            .catch(error => {
-                console.error("Error de red:", error);
-                alert("Error de red. Por favor, verifica tu conexión a Internet.");
-            });
 
-            return false;
+            } catch (error) {
+                console.error("Error de red al enviar el formulario de " + formType + ":", error);
+                mostrarMensaje("Error de red al enviar el formulario de " + formType + ". Por favor, verifica tu conexión a Internet o la URL de Apps Script.");
+            }
+
+            return false; // Evita el envío tradicional del formulario HTML
         }
 
         // Función para limpiar los campos del formulario.
@@ -453,7 +400,6 @@
                     document.getElementById("notas").value = "";
                 }
                 document.getElementById('maquina').value = "";
-                // Es importante re-obtener los elementos para asegurar que existan en el DOM actual
                 const camionFields = document.getElementById('campos_camion');
                 const otraMaquinariaFields = document.getElementById('campos_otra_maquinaria');
                 if (camionFields) camionFields.style.display = 'none';
@@ -470,8 +416,8 @@
                 document.getElementById("formulario-container").style.display = "flex";
                 document.getElementById("formulario-container").innerHTML = `
                     <div class="custom-form-container">
-                        <h2 class="custom-form-title">BITÁCORA DE MAQUINARIA</h2>
-                        <form id="formulario-maquinaria" onsubmit="return enviarFormulario('maquinaria');">
+                        <h2 class="custom-form-title">BITÁCORA DE MANTENIMIENTO DE MAQUINARIA</h2>
+                        <form id="formulario-maquinaria">
                             <div class="custom-form-group">
                                 <label for="fecha" class="custom-form-label">Fecha:</label>
                                 <input type="date" id="fecha" name="fecha" class="custom-input" required>
@@ -538,8 +484,8 @@
                 document.getElementById("formulario-container").style.display = "flex";
                 document.getElementById("formulario-container").innerHTML = `
                     <div class="custom-form-container">
-                        <h2 class="custom-form-title">BITÁCORA DE VEHÍCULOS</h2>
-                        <form id="formulario-vehiculos" onsubmit="return enviarFormulario('vehiculos');">
+                        <h2 class="custom-form-title">BITÁCORA DE MANTENIMIENTO DE VEHÍCULOS</h2>
+                        <form id="formulario-vehiculos">
                             <div class="custom-form-group">
                                 <label for="fecha_reporte_vehiculo" class="custom-form-label">Fecha de Reporte:</label>
                                 <input type="date" id="fecha_reporte_vehiculo" name="fecha_reporte_vehiculo" class="custom-input" required>
@@ -600,10 +546,10 @@
                 document.getElementById("formulario-container").innerHTML = `
                     <div class="custom-form-container">
                         <header class="custom-form-header">
-                            <h2 class="custom-form-title">Reporte de Actividades de Maquinaria</h2>
+                            <h2 class="custom-form-title">REPORTE DE ACTIVIDADES DE MAQUINARIA</h2>
                             <p class="custom-form-description">Por favor, complete el siguiente formulario para registrar las actividades de la maquinaria.</p>
                         </header>
-                        <form id="maquinariaForm" onsubmit="return enviarFormulario('reporte');" class="mt-8 space-y-6">
+                        <form id="maquinariaForm">
                             <div class="custom-form-group">
                                 <label for="maquina" class="custom-form-label">Seleccione la Maquinaria:</label>
                                 <select id="maquina" name="maquina" class="custom-select" required>
@@ -753,36 +699,42 @@
             document.getElementById("menu-principal").style.display = "flex";
         }
 
-        // Función para mostrar el recordatorio
-        function mostrarRecordatorio() {
-            // Verifica si ya se ha mostrado el recordatorio hoy
-            // Obtener la fecha de hoy en formato 'YYYY-MM-DD'
-            const today = new Date().toISOString().slice(0, 10);
-            const lastShownDate = localStorage.getItem('recordatorioMostradoHoy');
+        // Función para mostrar un mensaje personalizado (reemplaza alert())
+        function mostrarMensaje(mensaje) {
+            const mensajeDiv = document.createElement('div');
+            mensajeDiv.className = 'mensaje-personalizado';
+            mensajeDiv.textContent = mensaje;
 
-            if (lastShownDate !== today) { // Solo mostrar si no se ha mostrado hoy
-                // Crea el elemento del recordatorio
-                const recordatorioDiv = document.createElement('div');
-                recordatorioDiv.className = 'recordatorio-container';
-                recordatorioDiv.textContent = '¡Aún no llenas tu registro de actividades diarias, recuerda que es tu asistencia del día!';
+            document.body.appendChild(mensajeDiv);
 
-                // Agrega el recordatorio al body
-                document.body.appendChild(recordatorioDiv);
-
-                // Guarda la fecha de hoy en localStorage
-                localStorage.setItem('recordatorioMostradoHoy', today);
-
-                // Opcional: desaparecer el recordatorio después de un tiempo
-                setTimeout(() => {
-                    recordatorioDiv.remove();
-                }, 10000); // 10 segundos
-            }
+            setTimeout(() => {
+                mensajeDiv.remove();
+            }, 3000); // El mensaje desaparece después de 3 segundos
         }
 
-        // Función para verificar si se debe mostrar el recordatorio (al cargar la página)
-        window.onload = function() {
-            mostrarRecordatorio();
-        };
+        // Se ha eliminado la función de recordatorio y su llamada en window.onload.
+
+        // *** LÓGICA DE DELEGACIÓN DE EVENTOS PARA FORMULARIOS DINÁMICOS ***
+        // Escucha el evento 'submit' en el body para capturar envíos de formularios que se cargan dinámicamente.
+        document.addEventListener('DOMContentLoaded', function() { // Asegura que el DOM esté completamente cargado
+            document.body.addEventListener('submit', async function(event) {
+                // Previene el envío de formulario por defecto (para que JavaScript lo maneje)
+                event.preventDefault(); 
+                
+                // Identifica el ID del formulario que se envió
+                const formId = event.target.id;
+                console.log("Evento de submit detectado para el formulario con ID:", formId); // Línea de depuración
+
+                if (formId === 'formulario-maquinaria') {
+                    await enviarFormulario('maquinaria');
+                } else if (formId === 'formulario-vehiculos') {
+                    await enviarFormulario('vehiculos');
+                } else if (formId === 'maquinariaForm') { // Este es el ID para el formulario de reporte
+                    await enviarFormulario('reporte');
+                }
+            });
+        });
+        // *** FIN DE LÓGICA DE DELEGACIÓN DE EVENTOS ***
 
     </script>
 </head>
@@ -794,11 +746,6 @@
         <button onclick="mostrarFormulario('maquinaria')" style="background-color: #b0e0e6; color: #2c3e50;">BITÁCORA DE MAQUINARIA</button>
         <button onclick="mostrarFormulario('vehiculos')" style="background-color: #b0e0e6; color: #2c3e50;">BITÁCORA DE VEHÍCULOS</button>
         <button onclick="mostrarFormulario('reporte')" style="background-color: #ffa500; color: #2c3e50;">REPORTE DE ACTIVIDADES DE MAQUINARIA</button>
-    </div>
-    <div id="imagen-link-container">
-        <a href="https://www.jesas.com.mx/" id="link-empresa" target="_blank">
-            <img id="imagen-inferior" src="https://d2sapt5dytmohl.cloudfront.net/images/upload/92505/sml/660f1cdf9c6527.27633487.jpg" alt="Logo de la Empresa">
-        </a>
     </div>
 
     <div id="formulario-container">
