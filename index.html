@@ -239,6 +239,22 @@
             margin-top: 5px;
             margin-bottom: 5px;
         }
+
+        .contacto-soporte { /* Nuevo estilo para el contacto de soporte */
+            text-align: center;
+            font-size: 16px;
+            color: #555;
+            margin-top: 20px; /* Ajustado para que tenga más espacio del contenido de arriba */
+            margin-bottom: 20px; /* Ajustado para que tenga más espacio del borde inferior */
+        }
+        .contacto-soporte a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .contacto-soporte a:hover {
+            text-decoration: underline;
+        }
     </style>
     <script>
         // Función para obtener los parámetros de la URL. (No se usa en este código)
@@ -252,7 +268,7 @@
 
         // Función para enviar los datos del formulario a Google Sheets a través de Apps Script.
         async function enviarFormulario(formType) {
-            console.log("La función enviarFormulario ha sido llamada para:", formType); 
+            console.log("DEBUG: La función enviarFormulario ha sido llamada para:", formType); 
 
             // *** IMPORTANTE: REEMPLAZA ESTA URL ***
             // Esta será la URL de tu aplicación web de Google Apps Script.
@@ -260,20 +276,45 @@
             const appsScriptUrl = "https://script.google.com/macros/s/AKfycbyxN4skJfh2DZzHTA3dL7ds4a64Wptna13iGNbt4WuvKEgOiujHcJvThGYyRMWsTihr/exec"; 
 
             let dataToSend = {}; // Objeto para almacenar los datos a enviar
+            let isValid = true; // Variable para controlar la validación
 
             if (formType === "maquinaria") {
+                // Validación para formulario de maquinaria
+                const fields = ["fecha", "horometro", "quienRealiza", "tipoMantenimiento", "descripcionFalla", "operador", "tipoMaquinaria"];
+                for (const fieldId of fields) {
+                    const input = document.getElementById(fieldId);
+                    if (input && input.value.trim() === '') {
+                        mostrarMensaje(`Por favor, complete el campo: ${input.previousElementSibling.textContent.replace(':', '')}`);
+                        isValid = false;
+                        break;
+                    }
+                }
+                if (!isValid) return;
+
                 dataToSend = {
                     type: "maquinaria", // Identificador para Apps Script
                     fecha: document.getElementById("fecha").value,
                     horometro: document.getElementById("horometro").value,
                     quienRealiza: document.getElementById("quienRealiza").value,
-                    tipoMantenimientoMaq: document.getElementById("tipoMantenimiento").value,
+                    tipoMantenimiento: document.getElementById("tipoMantenimiento").value,
                     descripcionFalla: document.getElementById("descripcionFalla").value,
-                    operadorMaq: document.getElementById("operador").value,
+                    operador: document.getElementById("operador").value,
                     notasMaq: document.getElementById("notas").value,
                     tipoMaquinaria: document.getElementById("tipoMaquinaria").value // Nombre completo de la maquinaria
                 };
             } else if (formType === "vehiculos") {
+                // Validación para formulario de vehículos
+                const fields = ["fecha_reporte_vehiculo", "kilometraje", "quienRealiza_vehiculo", "tipoMantenimiento_vehiculo", "descripcionMantenimiento", "operador_vehiculo", "vehiculo"];
+                for (const fieldId of fields) {
+                    const input = document.getElementById(fieldId);
+                    if (input && input.value.trim() === '') {
+                        mostrarMensaje(`Por favor, complete el campo: ${input.previousElementSibling.textContent.replace(':', '')}`);
+                        isValid = false;
+                        break;
+                    }
+                }
+                if (!isValid) return;
+
                 dataToSend = {
                     type: "vehiculos", // Identificador para Apps Script
                     fechaReporte: document.getElementById("fecha_reporte_vehiculo").value,
@@ -286,71 +327,129 @@
                     vehiculo: document.getElementById("vehiculo").value
                 };
             } else if (formType === "reporte") {
-                const maquinaSeleccionada = document.getElementById('maquina').value;
-                dataToSend = {
-                    type: "reporte", // Identificador para Apps Script
-                    maquinaSeleccionada: maquinaSeleccionada
-                };
+                console.log("DEBUG: Procesando formulario de REPORTE.");
+                try {
+                    const maquinaSeleccionada = document.getElementById('maquina').value;
+                    console.log("DEBUG: maquinaSeleccionada:", maquinaSeleccionada);
 
-                if (maquinaSeleccionada === 'camion_azul' || maquinaSeleccionada === 'camion_blanco') {
-                    dataToSend.fechaRep = document.getElementById("fecha_camion").value;
-                    dataToSend.material = document.getElementById("material").value;
-                    dataToSend.obra = document.getElementById("obra_camion").value;
-                    dataToSend.noViajes = document.getElementById("no_viajes").value;
-                    dataToSend.noVale = document.getElementById("no_vale").value;
-                    dataToSend.capacidad = document.getElementById("capacidad").value;
-                    dataToSend.chofer = document.getElementById("chofer").value;
-                    dataToSend.banco = document.getElementById("banco").value;
-                    dataToSend.distancia = document.getElementById("distancia").value;
-                    dataToSend.consumoLTKM = document.getElementById("consumo_lt_km").value;
-                    dataToSend.combustible = document.getElementById("combustible").value;
-                    dataToSend.saldoCombustible = document.getElementById("saldo_combustible").value;
-                    dataToSend.maquinaRep = maquinaSeleccionada === 'camion_azul' ? 'CAMION AZUL' : 'CAMION BLANCO';
-                } else {
-                    dataToSend.fechaRep = document.getElementById("fecha_otra").value;
-                    dataToSend.horometroSalida = document.getElementById("horometro_salida").value;
-                    dataToSend.horometroRegreso = document.getElementById("horometro_regreso").value;
-                    dataToSend.horasTrabajadas = document.getElementById("horas_trabajadas").value;
-                    dataToSend.obra = document.getElementById("obra_otra").value;
-                    dataToSend.notas = document.getElementById("notas").value; // Notas para otras maquinarias
-                    
-                    switch (maquinaSeleccionada) {
-                        case 'moto_140h': dataToSend.maquinaRep = 'MOTO 140H'; break;
-                        case 'moto_12g': dataToSend.maquinaRep = 'MOTO 12G'; break;
-                        case 'retroexcavadora_580_super_n': dataToSend.maquinaRep = 'Retroexcavadora 580 SUPER N'; break;
-                        case 'retroexcavadora_580_m': dataToSend.maquinaRep = 'Retroexcavadora 580 M'; break;
-                        case 'retroexcavadora_cat_416d': dataToSend.maquinaRep = 'Retroexcavadora CAT 416D'; break;
-                        case 'vibro_cat': dataToSend.maquinaRep = 'VIBRO CAT'; break;
-                        case 'pipa_freightliner': dataToSend.maquinaRep = 'PIPA FREIGHTLINER'; break;
-                        case 'pipa_kenworth': dataToSend.maquinaRep = 'PIPA KENWORTH'; break;
-                        case 'pata_de_cabra_cp_553': dataToSend.maquinaRep = 'PATA DE CABRA CP-553'; break;
-                        case 'bomba_achique_3': dataToSend.maquinaRep = 'BOMBA ACHIQUE 3\'\''; break;
-                        default: dataToSend.maquinaRep = maquinaSeleccionada; break;
+                    if (!maquinaSeleccionada) {
+                        mostrarMensaje("Por favor, seleccione la maquinaria.");
+                        return; // Detener el envío si no se selecciona la maquinaria
                     }
+
+                    dataToSend = {
+                        type: "reporte",
+                        maquinaSeleccionada: maquinaSeleccionada
+                    };
+
+                    // Validación específica para campos de camión
+                    if (maquinaSeleccionada === 'camion_azul' || maquinaSeleccionada === 'camion_blanco') {
+                        console.log("DEBUG: Maquinaria es camión (azul/blanco).");
+                        const camionFields = ["fecha_camion", "material", "obra_camion", "no_viajes", "capacidad", "chofer", "saldo_combustible"];
+                        for (const fieldId of camionFields) {
+                            const input = document.getElementById(fieldId);
+                            if (input && input.value.trim() === '') {
+                                mostrarMensaje(`Por favor, complete el campo de camión: ${input.previousElementSibling.textContent.replace(':', '')}`);
+                                isValid = false;
+                                break;
+                            }
+                        }
+                        if (!isValid) return; // Detener si falta algún campo de camión
+
+                        dataToSend.fechaRep = document.getElementById("fecha_camion").value;
+                        console.log("DEBUG: fechaRep:", dataToSend.fechaRep);
+                        dataToSend.material = document.getElementById("material").value;
+                        console.log("DEBUG: material:", dataToSend.material);
+                        dataToSend.obra = document.getElementById("obra_camion").value;
+                        console.log("DEBUG: obra (camion):", dataToSend.obra);
+                        dataToSend.noViajes = document.getElementById("no_viajes").value;
+                        console.log("DEBUG: noViajes:", dataToSend.noViajes);
+                        dataToSend.capacidad = document.getElementById("capacidad").value;
+                        console.log("DEBUG: capacidad:", dataToSend.capacidad);
+                        dataToSend.chofer = document.getElementById("chofer").value;
+                        console.log("DEBUG: chofer:", dataToSend.chofer);
+                        dataToSend.saldoCombustible = document.getElementById("saldo_combustible").value;
+                        console.log("DEBUG: saldoCombustible:", dataToSend.saldoCombustible);
+                        dataToSend.maquinaRep = maquinaSeleccionada === 'camion_azul' ? 'CAMION AZUL' : 'CAMION BLANCO';
+                    } else { // Validación específica para otras maquinarias
+                        console.log("DEBUG: Maquinaria es otra (no camión).");
+                        const otraMaquinariaFields = ["fecha_otra", "horometro_salida", "horometro_regreso", "obra_otra", "operador_reporte_otra", "notas_otra"];
+                        for (const fieldId of otraMaquinariaFields) {
+                            const input = document.getElementById(fieldId);
+                            if (input && input.value.trim() === '') {
+                                mostrarMensaje(`Por favor, complete el campo de otra maquinaria: ${input.previousElementSibling.textContent.replace(':', '')}`);
+                                isValid = false;
+                                break;
+                            }
+                        }
+                        if (!isValid) return; // Detener si falta algún campo de otra maquinaria
+
+                        dataToSend.fechaRep = document.getElementById("fecha_otra").value;
+                        console.log("DEBUG: fechaRep (otra):", dataToSend.fechaRep);
+                        dataToSend.horometroSalida = document.getElementById("horometro_salida").value;
+                        console.log("DEBUG: horometroSalida:", dataToSend.horometroSalida);
+                        dataToSend.horometroRegreso = document.getElementById("horometro_regreso").value;
+                        console.log("DEBUG: horometroRegreso:", dataToSend.horometroRegreso);
+                        dataToSend.horasTrabajadas = document.getElementById("horas_trabajadas").value;
+                        console.log("DEBUG: horasTrabajadas:", dataToSend.horasTrabajadas);
+                        dataToSend.obra = document.getElementById("obra_otra").value;
+                        console.log("DEBUG: obra (otra):", dataToSend.obra);
+                        dataToSend.operadorReporte = document.getElementById("operador_reporte_otra").value;
+                        console.log("DEBUG: operadorReporte:", dataToSend.operadorReporte);
+                        dataToSend.notas = document.getElementById("notas_otra").value;
+                        console.log("DEBUG: notas (otra):", dataToSend.notas);
+                        
+                        switch (maquinaSeleccionada) {
+                            case 'moto_140h': dataToSend.maquinaRep = 'MOTO 140H'; break;
+                            case 'moto_12g': dataToSend.maquinaRep = 'MOTO 12G'; break;
+                            case 'retroexcavadora_580_super_n': dataToSend.maquinaRep = 'Retroexcavadora 580 SUPER N'; break;
+                            case 'retroexcavadora_580_m': dataToSend.maquinaRep = 'Retroexcavadora 580 M'; break;
+                            case 'retroexcavadora_cat_416d': dataToSend.maquinaRep = 'Retroexcavadora CAT 416D'; break;
+                            case 'vibro_cat': dataToSend.maquinaRep = 'VIBRO CAT'; break;
+                            case 'pipa_freightliner': dataToSend.maquinaRep = 'PIPA FREIGHTLINER'; break;
+                            case 'pipa_kenworth': dataToSend.maquinaRep = 'PIPA KENWORTH'; break;
+                            case 'pata_de_cabra_cp_553': dataToSend.maquinaRep = 'PATA DE CABRA CP-553'; break;
+                            case 'bomba_achique_3': dataToSend.maquinaRep = 'BOMBA ACHIQUE 3\'\''; break;
+                            default: dataToSend.maquinaRep = maquinaSeleccionada; break;
+                        }
+                    }
+                } catch (error) {
+                    console.error("ERROR en la recolección de datos del formulario de reporte:", error);
+                    mostrarMensaje("Error interno al preparar los datos del formulario. Revisa la consola para más detalles.");
+                    return false; // Detener el envío si hay un error en la recolección de datos
                 }
             }
 
-            console.log("Datos a enviar:", dataToSend); // Para depuración
+            console.log("DEBUG: Datos a enviar:", dataToSend); // Para depuración
 
             try {
                 const response = await fetch(appsScriptUrl, {
                     method: 'POST',
-                    // mode: 'no-cors', ← lo comentas temporalmente
-
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded', 
                     },
                     body: new URLSearchParams(dataToSend).toString() 
                 });
 
-                console.log("Solicitud enviada a Google Apps Script. Respuesta (no-cors):", response);
-                mostrarMensaje("¡Formulario de " + formType + " enviado con éxito a Google Sheets!");
-                limpiarFormulario(formType);
-                mostrarInicio();
+                // Leer la respuesta de texto de Apps Script
+                const responseText = await response.text();
+                console.log("DEBUG: Respuesta de Apps Script:", responseText); // Registrar la respuesta cruda
+
+                if (responseText.startsWith("OK:")) {
+                    mostrarMensaje("¡Formulario de " + formType + " enviado con éxito a Google Sheets!");
+                    limpiarFormulario(formType);
+                    mostrarInicio();
+                } else if (responseText.startsWith("ERROR_HOROMETRO:")) { // Error específico de horómetro
+                    mostrarMensaje("Error de Horómetro: " + responseText.replace("ERROR_HOROMETRO: ", ""));
+                } else if (responseText.startsWith("ERROR:")) {
+                    mostrarMensaje("Error al enviar el formulario de " + formType + ": " + responseText.replace("ERROR: ", ""));
+                } else {
+                    mostrarMensaje("Respuesta inesperada del servidor: " + responseText);
+                }
 
             } catch (error) {
-                console.error("Error de red al enviar el formulario de " + formType + ":", error);
-                mostrarMensaje("Error de red al enviar el formulario de " + formType + ". Por favor, verifica tu conexión a Internet o la URL de Apps Script.");
+                console.error("DEBUG: Error de red al enviar el formulario de " + formType + ":", error);
+                mostrarMensaje("Error de red al enviar el formulario de " + formType + ". Por favor, verifica tu conexión a Internet o la URL de Apps Script. Detalles: " + error.message);
             }
 
             return false; // Evita el envío tradicional del formulario HTML
@@ -384,13 +483,8 @@
                     document.getElementById("material").value = "";
                     document.getElementById("obra_camion").value = "";
                     document.getElementById("no_viajes").value = "";
-                    document.getElementById("no_vale").value = "";
                     document.getElementById("capacidad").value = "";
                     document.getElementById("chofer").value = "";
-                    document.getElementById("banco").value = "";
-                    document.getElementById("distancia").value = "";
-                    document.getElementById("consumo_lt_km").value = "";
-                    document.getElementById("combustible").value = "";
                     document.getElementById("saldo_combustible").value = "";
                 } else if (maquinaSeleccionada) {
                     document.getElementById("fecha_otra").value = "";
@@ -398,7 +492,8 @@
                     document.getElementById("horometro_regreso").value = "";
                     document.getElementById("horas_trabajadas").value = "";
                     document.getElementById("obra_otra").value = "";
-                    document.getElementById("notas").value = "";
+                    document.getElementById("operador_reporte_otra").value = "";
+                    document.getElementById("notas_otra").value = "";
                 }
                 document.getElementById('maquina').value = "";
                 const camionFields = document.getElementById('campos_camion');
@@ -421,16 +516,20 @@
                         <form id="formulario-maquinaria">
                             <div class="custom-form-group">
                                 <label for="fecha" class="custom-form-label">Fecha:</label>
-                                <input type="date" id="fecha" name="fecha" class="custom-input" required>
+                                <input type="date" id="fecha" name="fecha" class="custom-input">
                             </div>
                             <div class="custom-form-group">
                                 <label for="tipoMaquinaria" class="custom-form-label">Tipo de Maquinaria:</label>
-                                <select id="tipoMaquinaria" name="tipoMaquinaria" class="custom-select" required>
+                                <select id="tipoMaquinaria" name="tipoMaquinaria" class="custom-select">
                                     <option value="">Seleccione una opción</option>
                                     <option value="VIBROCOMPACTADOR1 INGERSOLL SD100D C">VIBRO 1</option>
+                                    <option value="RETROEXCAVADORA \"1\" EXT">RETRO 1</option>
                                     <option value="CAMION 2 T600">CAMION 2 T600</option>
                                     <option value="PIPA1">PIPA1</option>
                                     <option value="CAMION 3">Camión 3</option>
+                                    <option value="RETROEXCAVADORA3 580SN">RETROEXCAVADORA3 580SN</option>
+                                    <option value="MOTONIVELADORA 140H \"1\"">Motoniveladora 140H "1"</option>
+                                    <option value="MOTONIVELADORA 12G">MOTONIVELADORA 12G</option>
                                     <option value="VIBROCOMPACTADOR2 CATERPILLAR">VIBROCOMPACTADOR2 CATERPILLAR</option>
                                     <option value="PIPA2 T300">PIPA2 T300</option>
                                     <option value="COMPRESOR1">COMPRESOR1</option>
@@ -441,21 +540,19 @@
                                     <option value="TOPO">TOPO</option>
                                     <option value="PATA DE CABRA">PATA DE CABRA</option>
                                     <option value="RETROEXCAVADORA CAT 416D">RETROEXCAVADORA CAT 416D</option>
-                                    <option value="RETROEXCAVADORA1 EXT 580M EXT">RETROEXC1</option>
-                                    <option value="MOTONIVELADORA 1 140H">MOTO 1</option>
                                 </select>
                             </div>
                             <div class="custom-form-group">
                                 <label for="horometro" class="custom-form-label">Horómetro:</label>
-                                <input type="text" id="horometro" name="horometro" class="custom-input" required>
+                                <input type="text" id="horometro" name="horometro" class="custom-input">
                             </div>
                             <div class="custom-form-group">
                                 <label for="quienRealiza" class="custom-form-label">Quién Realiza el Mantenimiento:</label>
-                                <input type="text" id="quienRealiza" name="quienRealiza" class="custom-input" required>
+                                <input type="text" id="quienRealiza" name="quienRealiza" class="custom-input">
                             </div>
                             <div class="custom-form-group">
                                 <label for="tipoMantenimiento" class="custom-form-label">Tipo de Mantenimiento:</label>
-                                <select id="tipoMantenimiento" name="tipoMantenimiento" class="custom-select" required>
+                                <select id="tipoMantenimiento" name="tipoMantenimiento" class="custom-select">
                                     <option value="">Seleccione una opción</option>
                                     <option value="Preventivo">Preventivo</option>
                                     <option value="Correctivo">Correctivo</option>
@@ -463,11 +560,11 @@
                             </div>
                             <div class="custom-form-group">
                                 <label for="descripcionFalla" class="custom-form-label">Descripción de la Falla:</label>
-                                <textarea id="descripcionFalla" name="descripcionFalla" class="custom-input" rows="4" required></textarea>
+                                <textarea id="descripcionFalla" name="descripcionFalla" class="custom-input" rows="4"></textarea>
                             </div>
                             <div class="custom-form-group">
                                 <label for="operador" class="custom-form-label">Operador:</label>
-                                <input type="text" id="operador" name="operador" class="custom-input" required>
+                                <input type="text" id="operador" name="operador" class="custom-input">
                             </div>
                             <div class="custom-form-group">
                                 <label for="notas" class="custom-form-label">Notas:</label>
@@ -487,11 +584,11 @@
                         <form id="formulario-vehiculos">
                             <div class="custom-form-group">
                                 <label for="fecha_reporte_vehiculo" class="custom-form-label">Fecha de Reporte:</label>
-                                <input type="date" id="fecha_reporte_vehiculo" name="fecha_reporte_vehiculo" class="custom-input" required>
+                                <input type="date" id="fecha_reporte_vehiculo" name="fecha_reporte_vehiculo" class="custom-input">
                             </div>
                             <div class="custom-form-group">
                                 <label for="vehiculo" class="custom-form-label">Vehículo:</label>
-                                <select id="vehiculo" name="vehiculo" class="custom-select" required>
+                                <select id="vehiculo" name="vehiculo" class="custom-select">
                                     <option value="">Seleccione una opción</option>
                                     <option value="RAV4 2018">RAV4 2018</option>
                                     <option value="YARIS 2016">YARIS 2016</option>
@@ -508,15 +605,15 @@
                             </div>
                             <div class="custom-form-group">
                                 <label for="kilometraje" class="custom-form-label">Kilometraje:</label>
-                                <input type="text" id="kilometraje" name="kilometraje" class="custom-input" required>
+                                <input type="text" id="kilometraje" name="kilometraje" class="custom-input">
                             </div>
                             <div class="custom-form-group">
                                 <label for="quienRealiza_vehiculo" class="custom-form-label">Quién Realiza el Mantenimiento:</label>
-                                <input type="text" id="quienRealiza_vehiculo" name="quienRealiza_vehiculo" class="custom-input" required>
+                                <input type="text" id="quienRealiza_vehiculo" name="quienRealiza_vehiculo" class="custom-input">
                             </div>
                             <div class="custom-form-group">
                                 <label for="tipoMantenimiento_vehiculo" class="custom-form-label">Tipo de Mantenimiento:</label>
-                                <select id="tipoMantenimiento_vehiculo" name="tipoMantenimiento_vehiculo" class="custom-select" required>
+                                <select id="tipoMantenimiento_vehiculo" name="tipoMantenimiento_vehiculo" class="custom-select">
                                     <option value="">Seleccione una opción</option>
                                     <option value="Preventivo">Preventivo</option>
                                     <option value="Correctivo">Correctivo</option>
@@ -524,11 +621,11 @@
                             </div>
                             <div class="custom-form-group">
                                 <label for="descripcionMantenimiento" class="custom-form-label">Descripción del Mantenimiento:</label>
-                                <textarea id="descripcionMantenimiento" name="descripcionMantenimiento" class="custom-input" rows="4" required></textarea>
+                                <textarea id="descripcionMantenimiento" name="descripcionMantenimiento" class="custom-input" rows="4"></textarea>
                             </div>
                             <div class="custom-form-group">
                                 <label for="operador_vehiculo" class="custom-form-label">Operador:</label>
-                                <input type="text" id="operador_vehiculo" name="operador_vehiculo" class="custom-input" required>
+                                <input type="text" id="operador_vehiculo" name="operador_vehiculo" class="custom-input">
                             </div>
                             <div class="custom-form-group">
                                 <label for="notas_vehiculo" class="custom-form-label">Notas:</label>
@@ -551,7 +648,7 @@
                         <form id="maquinariaForm">
                             <div class="custom-form-group">
                                 <label for="maquina" class="custom-form-label">Seleccione la Maquinaria:</label>
-                                <select id="maquina" name="maquina" class="custom-select" required>
+                                <select id="maquina" name="maquina" class="custom-select">
                                     <option value="">Seleccione...</option>
                                     <option value="camion_azul">Camión Azul</option>
                                     <option value="camion_blanco">Camión Blanco</option>
@@ -571,28 +668,28 @@
                             <div class="camion-fields" id="campos_camion">
                                 <div class="custom-form-group">
                                     <label for="fecha_camion" class="custom-form-label">Fecha:</label>
-                                    <input type="date" id="fecha_camion" name="fecha_camion" class="custom-input" required>
+                                    <input type="date" id="fecha_camion" name="fecha_camion" class="custom-input">
                                 </div>
                                 <div class="custom-form-group">
                                     <label for="material" class="custom-form-label">Material:</label>
-                                    <input type="text" id="material" name="material" class="custom-input" required>
+                                    <input type="text" id="material" name="material" class="custom-input">
                                 </div>
                                 <div class="custom-form-group">
                                     <label for="obra_camion" class="custom-form-label">Obra:</label>
-                                    <input type="text" id="obra_camion" name="obra_camion" class="custom-input" required>
+                                    <input type="text" id="obra_camion" name="obra_camion" class="custom-input">
                                 </div>
                                 <div class="custom-form-group">
                                     <label for="no_viajes" class="custom-form-label">No. de Viajes:</label>
-                                    <input type="number" id="no_viajes" name="no_viajes" class="custom-input" required>
+                                    <input type="number" id="no_viajes" name="no_viajes" class="custom-input">
                                 </div>
                                 
                                 <div class="custom-form-group">
                                     <label for="capacidad" class="custom-form-label">Capacidad:</label>
-                                    <input type="text" id="capacidad" name="capacidad" class="custom-input" required>
+                                    <input type="text" id="capacidad" name="capacidad" class="custom-input">
                                 </div>
                                 <div class="custom-form-group">
                                     <label for="chofer" class="custom-form-label">Chofer:</label>
-                                    <input type="text" id="chofer" name="chofer" class="custom-input" required>
+                                    <input type="text" id="chofer" name="chofer" class="custom-input">
                                 </div>
                                 
                                 
@@ -600,22 +697,22 @@
                                 
                                 <div class="custom-form-group">
                                     <label for="saldo_combustible" class="custom-form-label">Saldo de Combustible:</label>
-                                    <input type="text" id="saldo_combustible" name="saldo_combustible" class="custom-input" required>
+                                    <input type="text" id="saldo_combustible" name="saldo_combustible" class="custom-input">
                                 </div>
                             </div>
 
                             <div class="otra-maquinaria-fields" id="campos_otra_maquinaria">
                                 <div class="custom-form-group">
                                     <label for="fecha_otra" class="custom-form-label">Fecha:</label>
-                                    <input type="date" id="fecha_otra" name="fecha_otra" class="custom-input" required>
+                                    <input type="date" id="fecha_otra" name="fecha_otra" class="custom-input">
                                 </div>
                                 <div class="custom-form-group">
                                     <label for="horometro_salida" class="custom-form-label">Horómetro o Salida:</label>
-                                    <input type="text" id="horometro_salida" name="horometro_salida" class="custom-input" required>
+                                    <input type="text" id="horometro_salida" name="horometro_salida" class="custom-input">
                                 </div>
                                 <div class="custom-form-group">
                                     <label for="horometro_regreso" class="custom-form-label">Horómetro o Regreso:</label>
-                                    <input type="text" id="horometro_regreso" name="horometro_regreso" class="custom-input" required>
+                                    <input type="text" id="horometro_regreso" name="horometro_regreso" class="custom-input">
                                 </div>
                                 <div class="custom-form-group">
                                     <label for="horas_trabajadas" class="custom-form-label">Horas Trabajadas:</label>
@@ -623,11 +720,15 @@
                                 </div>
                                 <div class="custom-form-group">
                                     <label for="obra_otra" class="custom-form-label">Obra:</label>
-                                    <input type="text" id="obra_otra" name="obra_otra" class="custom-input" required>
+                                    <input type="text" id="obra_otra" name="obra_otra" class="custom-input">
                                 </div>
                                 <div class="custom-form-group">
-                                    <label for="notas" class="custom-form-label">Notas:</label>
-                                    <textarea id="notas" name="notas" class="custom-input" rows="4" required></textarea>
+                                    <label for="operador_reporte_otra" class="custom-form-label">Operador:</label>
+                                    <input type="text" id="operador_reporte_otra" name="operador_reporte_otra" class="custom-input">
+                                </div>
+                                <div class="custom-form-group">
+                                    <label for="notas_otra" class="custom-form-label">Notas:</label>
+                                    <textarea id="notas_otra" name="notas_otra" class="custom-input" rows="4"></textarea>
                                 </div>
                             </div>
 
@@ -734,6 +835,8 @@
 
     <div id="formulario-container">
     </div>
+
+    <p class="contacto-soporte">Para soporte técnico, por favor, contacte a: <a href="https://wa.me/528334366272" target="_blank">833-436-6272</a></p>
 
 </body>
 </html>
