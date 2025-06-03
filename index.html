@@ -381,8 +381,10 @@
                         console.log("DEBUG: capacidad:", dataToSend.capacidad);
                         dataToSend.chofer = document.getElementById("chofer").value;
                         console.log("DEBUG: chofer:", dataToSend.chofer);
-                        dataToSend.numeroVale = document.getElementById("numero_vale").value; // CAMBIO: número de vale
-                        console.log("DEBUG: numeroVale:", dataToSend.numeroVale); // CAMBIO: número de vale
+                        dataToSend.numeroVale = document.getElementById("numero_vale").value;
+                        console.log("DEBUG: numeroVale:", dataToSend.numeroVale);
+                        dataToSend.notasCamion = document.getElementById("notas_camion").value; // AGREGADO: Notas para camión
+                        console.log("DEBUG: notasCamion:", dataToSend.notasCamion); // AGREGADO: Notas para camión
                         dataToSend.maquinaRep = maquinaSeleccionada === 'camion_azul' ? 'CAMION AZUL' : 'CAMION BLANCO';
                     } else { // Validación específica para otras maquinarias
                         console.log("DEBUG: Maquinaria es otra (no camión).");
@@ -499,6 +501,7 @@
                     document.getElementById("capacidad").value = "";
                     document.getElementById("chofer").value = "";
                     document.getElementById("numero_vale").value = ""; 
+                    document.getElementById("notas_camion").value = ""; // AGREGADO: Limpiar notas para camión
                 } else if (maquinaSeleccionada) {
                     document.getElementById("fecha_otra").value = "";
                     document.getElementById("horometro_salida").value = "";
@@ -699,6 +702,10 @@
                                     <label for="numero_vale" class="custom-form-label">Número de Vale:</label>
                                     <input type="text" id="numero_vale" name="numero_vale" class="custom-input">
                                 </div>
+                                <div class="custom-form-group">
+                                    <label for="notas_camion" class="custom-form-label">Notas:</label>
+                                    <textarea id="notas_camion" name="notas_camion" class="custom-input" rows="4"></textarea>
+                                </div>
                             </div>
 
                             <div id="campos_otra_maquinaria" class="otra-maquinaria-fields">
@@ -834,7 +841,7 @@
         <p class="info-empresa">C. Privada Villa Hermosa 110, Del Bosque, 89318 Tampico, Tamps.</p>
         <button onclick="mostrarFormulario('maquinaria')" style="background-color: #b0e0e6; color: #2c3e50;">BITÁCORA DE MAQUINARIA</button>
         <button onclick="mostrarFormulario('vehiculos')" style="background-color: #b0e0e6; color: #2c3e50;">BITÁCORA DE VEHÍCULOS</button>
-        <button onclick="mostrarFormulario('reporte')" style="background-color: #ffa500; color: #2c3e50;">REPORTE DE ACTIVIDADES</button>
+        <button onclick="mostrarFormulario('reporte')" style="background-color: #ffa500; color: #ffffff;">REPORTE DE ACTIVIDADES</button>
     </div>
 
     <div id="formulario-container" class="formulario-container">
